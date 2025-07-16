@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Header from "@/components/header"
 import { useRouter } from "next/navigation"
-import { BookOpen, Download, Lock, CheckCircle, ArrowLeft } from "lucide-react"
+import { BookOpen, Download, Lock, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import FooterNavigation from "@/components/footer-navigation"
 
@@ -225,12 +225,6 @@ export default function MyCoursesPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
         <div className="flex items-center gap-4 mb-8">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm" className="bg-transparent">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Courses</h1>
             <p className="text-gray-600">

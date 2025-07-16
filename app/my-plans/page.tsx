@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Header from "@/components/header"
 import { useRouter } from "next/navigation"
-import { CreditCard, Shield, Star, Plus, Calendar, DollarSign, ArrowLeft, Trash2, AlertTriangle, X } from "lucide-react"
+import { CreditCard, Shield, Star, Plus, Calendar, DollarSign, Trash2, AlertTriangle, X } from "lucide-react"
 import Link from "next/link"
 import FooterNavigation from "@/components/footer-navigation"
 
@@ -206,10 +206,6 @@ export default function MyPlansPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
         {/* Back Button */}
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
-        </Link>
 
         {/* Header */}
         <div className="flex justify-between items-start mb-8">

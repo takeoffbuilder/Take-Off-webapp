@@ -12,7 +12,6 @@ import Header from "@/components/header"
 import FooterNavigation from "@/components/footer-navigation"
 import { useRouter } from "next/navigation"
 import {
-  ArrowLeft,
   Search,
   MessageCircle,
   Mail,
@@ -165,12 +164,6 @@ export default function SupportPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm" className="bg-transparent">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Support Center</h1>
               <p className="text-gray-600">Get help with your account and credit building journey</p>

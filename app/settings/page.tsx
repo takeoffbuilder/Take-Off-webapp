@@ -16,7 +16,6 @@ import {
   Bell,
   CreditCard,
   Shield,
-  LogOut,
   Edit,
   Save,
   X,
@@ -264,14 +263,6 @@ export default function SettingsPage() {
   const handleCancelEdit = () => {
     setEditedData(userData)
     setIsEditing(false)
-  }
-
-  const handleSignOut = () => {
-    localStorage.removeItem("takeoff_auth")
-    localStorage.removeItem("takeoff_user")
-    localStorage.removeItem("takeoff_selected_plan")
-    localStorage.removeItem("takeoff_subscriptions")
-    router.push("/")
   }
 
   const mainPlan = subscriptions.find((sub) => sub.planType === "main-plan")
@@ -620,10 +611,6 @@ export default function SettingsPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Account Settings</h1>
             <p className="text-gray-600">Manage your account preferences and billing information</p>
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2 bg-transparent">
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
         </div>
 
         <div className="grid gap-8">

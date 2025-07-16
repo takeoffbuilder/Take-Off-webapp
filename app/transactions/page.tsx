@@ -8,17 +8,7 @@ import { Input } from "@/components/ui/input"
 import Header from "@/components/header"
 import FooterNavigation from "@/components/footer-navigation"
 import { useRouter } from "next/navigation"
-import {
-  ArrowLeft,
-  Search,
-  Download,
-  CreditCard,
-  DollarSign,
-  TrendingUp,
-  Zap,
-  ArrowUpRight,
-  ArrowDownRight,
-} from "lucide-react"
+import { Search, Download, CreditCard, DollarSign, TrendingUp, Zap, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import Link from "next/link"
 
 interface UserData {
@@ -256,12 +246,6 @@ export default function TransactionsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm" className="bg-transparent">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Boost Plan Transactions</h1>
               <p className="text-gray-600">View your boost plan purchase history and payments</p>

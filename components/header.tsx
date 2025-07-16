@@ -69,9 +69,19 @@ export default function Header({ showAuth = true }: HeaderProps) {
         </div>
         <div className="flex items-center gap-4">
           {showAuth && !isAuthenticated && (
-            <Link href="/signin" onClick={closeMenu}>
-              <Button className="bg-sky-500 hover:bg-sky-600 text-white">Sign In</Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/signin" onClick={closeMenu}>
+                <Button
+                  variant="outline"
+                  className="bg-transparent border border-sky-500 text-white hover:bg-sky-500/10"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/signup" onClick={closeMenu}>
+                <Button className="bg-sky-400 hover:bg-sky-500 text-white">Sign Up</Button>
+              </Link>
+            </div>
           )}
           {isAuthenticated && hasSelectedPlan && (
             <Link href="/dashboard" onClick={closeMenu}>
@@ -98,7 +108,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={closeMenu} />
 
           {/* Dropdown Menu */}
-          <div className="fixed top-16 left-0 right-0 bg-white shadow-xl border-t border-gray-200 z-40 max-h-[80vh] overflow-y-auto">
+          <div className="fixed top-16 left-0 right-0 bg-gray-900 shadow-xl border-t border-gray-700 z-40 max-h-[80vh] overflow-y-auto">
             <nav className="max-w-7xl mx-auto px-4 py-6">
               {/* Authenticated User Menu (Simplified) */}
               {isAuthenticated && hasSelectedPlan ? (
@@ -109,34 +119,34 @@ export default function Header({ showAuth = true }: HeaderProps) {
                         <Link
                           href={item.href}
                           onClick={closeMenu}
-                          className="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="group flex items-center p-4 rounded-lg hover:bg-gray-800 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-sky-50 group-hover:bg-sky-100 transition-colors">
-                              <item.icon className="h-5 w-5 text-sky-600" />
+                            <div className="p-2 rounded-lg bg-sky-500/20 group-hover:bg-sky-500/30 transition-colors">
+                              <item.icon className="h-5 w-5 text-sky-400" />
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900 group-hover:text-sky-600 transition-colors">
+                              <div className="font-medium text-white group-hover:text-sky-400 transition-colors">
                                 {item.label}
                               </div>
-                              <div className="text-sm text-gray-500">{item.description}</div>
+                              <div className="text-sm text-gray-400">{item.description}</div>
                             </div>
                           </div>
                         </Link>
                       ) : (
                         <button
                           onClick={item.action}
-                          className="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors w-full text-left"
+                          className="group flex items-center p-4 rounded-lg hover:bg-gray-800 transition-colors w-full text-left"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-red-50 group-hover:bg-red-100 transition-colors">
-                              <item.icon className="h-5 w-5 text-red-600" />
+                            <div className="p-2 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
+                              <item.icon className="h-5 w-5 text-red-400" />
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900 group-hover:text-red-600 transition-colors">
+                              <div className="font-medium text-white group-hover:text-red-400 transition-colors">
                                 {item.label}
                               </div>
-                              <div className="text-sm text-gray-500">{item.description}</div>
+                              <div className="text-sm text-gray-400">{item.description}</div>
                             </div>
                           </div>
                         </button>
@@ -153,13 +163,13 @@ export default function Header({ showAuth = true }: HeaderProps) {
                         key={index}
                         href={link.href}
                         onClick={closeMenu}
-                        className="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="group flex items-center p-4 rounded-lg hover:bg-gray-800 transition-colors"
                       >
                         <div>
-                          <div className="font-medium text-gray-900 group-hover:text-sky-600 transition-colors">
+                          <div className="font-medium text-white group-hover:text-sky-400 transition-colors">
                             {link.label}
                           </div>
-                          <div className="text-sm text-gray-500 mt-1">
+                          <div className="text-sm text-gray-400 mt-1">
                             {link.href === "/plans" && "Choose the perfect credit building plan for your goals"}
                             {link.href === "/faqs" && "Get answers to frequently asked questions"}
                             {link.href === "/how-it-works" && "Learn how Take Off builds your credit"}
@@ -172,10 +182,10 @@ export default function Header({ showAuth = true }: HeaderProps) {
                   </div>
 
                   {/* Call to Action */}
-                  <div className="border-t border-gray-200 mt-6 pt-6">
+                  <div className="border-t border-gray-700 mt-6 pt-6">
                     <div className="text-center">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Take Off?</h3>
-                      <p className="text-gray-600 mb-4">
+                      <h3 className="text-lg font-semibold text-white mb-2">Ready to Take Off?</h3>
+                      <p className="text-gray-400 mb-4">
                         Start building your credit today with no credit checks required.
                       </p>
                       <Link href="/signin" onClick={closeMenu}>

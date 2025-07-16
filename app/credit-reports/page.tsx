@@ -6,18 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Header from "@/components/header"
 import FooterNavigation from "@/components/footer-navigation"
 import { useRouter } from "next/navigation"
-import {
-  TrendingUp,
-  Download,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  CreditCard,
-  ArrowLeft,
-  Eye,
-  FileText,
-} from "lucide-react"
-import Link from "next/link"
+import { TrendingUp, Download, Calendar, AlertTriangle, CheckCircle, CreditCard, Eye, FileText } from "lucide-react"
 
 interface UserData {
   firstName: string
@@ -124,12 +113,6 @@ export default function CreditReportsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm" className="bg-transparent">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Credit Reports</h1>
               <p className="text-gray-600">Monitor your credit health and track improvements</p>

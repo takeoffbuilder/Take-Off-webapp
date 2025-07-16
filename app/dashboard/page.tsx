@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import Header from "@/components/header"
 import { useRouter } from "next/navigation"
-import { Calendar, CreditCard, TrendingUp, Bell, HelpCircle, LogOut, Star, History, BookOpen } from "lucide-react"
+import { Calendar, CreditCard, TrendingUp, Bell, HelpCircle, Star, History, BookOpen } from "lucide-react"
 import Link from "next/link"
 import FooterNavigation from "@/components/footer-navigation"
 
@@ -112,12 +112,6 @@ export default function DashboardPage() {
     }
   }, [router])
 
-  const handleSignOut = () => {
-    localStorage.removeItem("takeoff_auth")
-    localStorage.removeItem("takeoff_user")
-    router.push("/")
-  }
-
   // Separate main plan and boost plans
   const mainPlan = allSubscriptions.find((sub) => sub.planType === "main-plan")
   const boostPlans = allSubscriptions.filter((sub) => sub.planType !== "main-plan")
@@ -143,10 +137,6 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {userData?.firstName || "User"}!</h1>
             <p className="text-gray-600">Here's your credit building progress</p>
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2 bg-transparent">
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

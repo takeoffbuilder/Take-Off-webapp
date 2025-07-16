@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
 import { useRouter } from "next/navigation"
-import { Check, Star, Shield, ArrowRight, TrendingUp, ArrowLeft, CreditCard } from "lucide-react"
-import Link from "next/link"
+import { Check, Star, Shield, ArrowRight, TrendingUp, CreditCard } from "lucide-react"
 
 interface UserData {
   firstName: string
@@ -225,12 +224,6 @@ export default function AddBoostPage() {
       <Header showAuth={false} />
 
       <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
-        {/* Back Button */}
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
-        </Link>
-
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">

@@ -215,50 +215,52 @@ export default function SignInPage() {
 
   if (step === "verification") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-black">
         <Header showAuth={false} />
 
         <main className="flex items-center justify-center py-12 px-4 pt-24">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-2xl shadow-lg p-8">
+            <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="h-8 w-8 text-sky-500" />
+                <div className="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Mail className="h-8 w-8 text-sky-400" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Check Your Email</h1>
-                <p className="text-gray-600">
+                <h1 className="text-3xl font-bold text-white mb-2">Check Your Email</h1>
+                <p className="text-gray-400">
                   We've sent a 6-digit verification code to
                   <br />
-                  <span className="font-medium text-gray-900">{email}</span>
+                  <span className="font-medium text-white">{email}</span>
                 </p>
               </div>
 
               {/* Demo Code Display */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-yellow-800 mb-2">
+              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-yellow-300 mb-2">
                   <strong>Demo Mode:</strong> Your verification code is:
                 </p>
-                <p className="text-2xl font-bold text-yellow-900 text-center">{sentCode}</p>
+                <p className="text-2xl font-bold text-yellow-200 text-center">{sentCode}</p>
               </div>
 
               <form onSubmit={handleVerificationSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="code">Verification Code</Label>
+                  <Label htmlFor="code" className="text-white">
+                    Verification Code
+                  </Label>
                   <Input
                     id="code"
                     type="text"
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="Enter 6-digit code"
-                    className="text-center text-2xl tracking-widest"
+                    className="text-center text-2xl tracking-widest bg-gray-800 border-gray-600 text-white placeholder-gray-500"
                     maxLength={6}
                     required
                   />
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-sm text-red-600">{error}</p>
+                  <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+                    <p className="text-sm text-red-300">{error}</p>
                   </div>
                 )}
 
@@ -272,12 +274,12 @@ export default function SignInPage() {
               </form>
 
               <div className="mt-6 text-center space-y-4">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-400 text-sm">
                   Didn't receive the code?{" "}
                   <button
                     onClick={resendCode}
                     disabled={isLoading}
-                    className="text-sky-500 hover:underline font-medium disabled:opacity-50"
+                    className="text-sky-400 hover:underline font-medium disabled:opacity-50"
                   >
                     {isLoading ? "Sending..." : "Resend Code"}
                   </button>
@@ -285,7 +287,7 @@ export default function SignInPage() {
 
                 <button
                   onClick={() => setStep("email")}
-                  className="flex items-center justify-center gap-2 text-gray-500 hover:text-gray-700 mx-auto"
+                  className="flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300 mx-auto"
                 >
                   ← Back to Email
                 </button>
@@ -298,27 +300,29 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <Header showAuth={false} />
 
       <main className="flex items-center justify-center py-12 px-4 pt-24">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Take Off</h1>
-              <p className="text-gray-600">Enter your email to sign in or create an account</p>
+              <h1 className="text-3xl font-bold text-white mb-2">Welcome to Take Off</h1>
+              <p className="text-gray-400">Enter your email to sign in or create an account</p>
             </div>
 
             <form onSubmit={handleEmailSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-white">
+                  Email Address
+                </Label>
                 <div className="relative">
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-gray-800 border-gray-600 text-white placeholder-gray-500"
                     placeholder="Enter your email"
                     required
                   />
@@ -327,8 +331,8 @@ export default function SignInPage() {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+                  <p className="text-sm text-red-300">{error}</p>
                 </div>
               )}
 
@@ -344,17 +348,17 @@ export default function SignInPage() {
             <div className="mt-8">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+                  <div className="w-full border-t border-gray-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-gray-900 text-gray-400">Or continue with</span>
                 </div>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="w-full bg-transparent"
+                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                   onClick={() => handleSocialSignIn("Google")}
                   type="button"
                 >
@@ -380,7 +384,7 @@ export default function SignInPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full bg-transparent"
+                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                   onClick={() => handleSocialSignIn("Facebook")}
                   type="button"
                 >
@@ -393,8 +397,8 @@ export default function SignInPage() {
             </div>
 
             {/* Demo Instructions */}
-            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
+            <div className="mt-8 bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+              <p className="text-sm text-blue-300">
                 <strong>Demo Mode:</strong> Enter any email address to receive a verification code!
               </p>
             </div>

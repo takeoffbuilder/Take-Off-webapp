@@ -193,10 +193,10 @@ export default function ServicesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading services...</p>
+          <p className="text-gray-400">Loading services...</p>
         </div>
       </div>
     )
@@ -205,16 +205,16 @@ export default function ServicesPage() {
   const currentOptions = selectedCategory === "credit-line" ? creditLineOptions : securedLoanOptions
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <Header showAuth={false} />
 
       <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
         {/* Welcome Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-white mb-4">
             Welcome, {userData?.firstName}! Choose Your Credit Building Plan
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Select the perfect credit building solution for your financial goals. All plans include tri-bureau reporting
             and no hidden fees.
           </p>
@@ -222,14 +222,14 @@ export default function ServicesPage() {
 
         {/* Service Category Toggle */}
         <div className="flex justify-center mb-12">
-          <div className="bg-white rounded-full p-2 shadow-lg">
+          <div className="bg-gray-900 border border-gray-700 rounded-full p-2 shadow-lg">
             <div className="flex">
               <button
                 onClick={() => setSelectedCategory("credit-line")}
                 className={`px-8 py-3 rounded-full font-medium transition-all ${
                   selectedCategory === "credit-line"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-400 hover:text-white"
                 }`}
               >
                 <CreditCard className="h-5 w-5 inline mr-2" />
@@ -240,7 +240,7 @@ export default function ServicesPage() {
                 className={`px-8 py-3 rounded-full font-medium transition-all ${
                   selectedCategory === "secured-loan"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-400 hover:text-white"
                 }`}
               >
                 <Shield className="h-5 w-5 inline mr-2" />
@@ -255,7 +255,7 @@ export default function ServicesPage() {
           {currentOptions.map((plan, index) => (
             <Card
               key={index}
-              className={`relative overflow-hidden ${
+              className={`relative overflow-hidden bg-gray-900 border-gray-700 ${
                 plan.popular ? "ring-2 ring-sky-500 shadow-xl scale-105" : "shadow-lg"
               } hover:shadow-xl transition-all duration-300`}
             >
@@ -271,28 +271,28 @@ export default function ServicesPage() {
               <div className={`h-2 bg-gradient-to-r ${plan.gradient}`}></div>
 
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
                 <div className="mt-4">
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                  <div className="text-3xl font-bold text-white mb-1">
                     {selectedCategory === "credit-line" ? plan.creditLimit : plan.loanAmount}
                   </div>
-                  <div className="text-sm text-gray-500 mb-2">
+                  <div className="text-sm text-gray-400 mb-2">
                     {selectedCategory === "credit-line" ? "Credit Line" : "Loan Amount"}
                   </div>
                   <div className="flex items-center justify-center gap-1">
-                    <span className="text-2xl font-bold text-sky-600">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
+                    <span className="text-2xl font-bold text-sky-400">{plan.price}</span>
+                    <span className="text-gray-400">{plan.period}</span>
                   </div>
                 </div>
-                <p className="text-gray-600 mt-3">{plan.description}</p>
+                <p className="text-gray-400 mt-3">{plan.description}</p>
               </CardHeader>
 
               <CardContent>
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="h-5 w-5 text-sky-500 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
+                      <Check className="h-5 w-5 text-sky-400 flex-shrink-0" />
+                      <span className="text-gray-300">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -311,78 +311,78 @@ export default function ServicesPage() {
         </div>
 
         {/* Comparison Section */}
-        <div className="bg-white rounded-2xl p-8 mb-12">
-          <h2 className="text-3xl font-bold text-center mb-8">Why Choose Take Off?</h2>
+        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-12">
+          <h2 className="text-3xl font-bold text-center mb-8 text-white">Why Choose Take Off?</h2>
 
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-sky-500" />
+              <div className="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="h-8 w-8 text-sky-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Proven Results</h3>
-              <p className="text-gray-600">Average +84 point increase in first year</p>
+              <h3 className="font-semibold text-lg mb-2 text-white">Proven Results</h3>
+              <p className="text-gray-400">Average +84 point increase in first year</p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-green-500" />
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-green-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Tri-Bureau Reporting</h3>
-              <p className="text-gray-600">Reports to Equifax, Experian & TransUnion</p>
+              <h3 className="font-semibold text-lg mb-2 text-white">Tri-Bureau Reporting</h3>
+              <p className="text-gray-400">Reports to Equifax, Experian & TransUnion</p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-8 w-8 text-purple-500" />
+              <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="h-8 w-8 text-purple-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">No Hidden Fees</h3>
-              <p className="text-gray-600">Transparent pricing with no surprises</p>
+              <h3 className="font-semibold text-lg mb-2 text-white">No Hidden Fees</h3>
+              <p className="text-gray-400">Transparent pricing with no surprises</p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-orange-500" />
+              <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Star className="h-8 w-8 text-orange-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Expert Support</h3>
-              <p className="text-gray-600">Dedicated credit building specialists</p>
+              <h3 className="font-semibold text-lg mb-2 text-white">Expert Support</h3>
+              <p className="text-gray-400">Dedicated credit building specialists</p>
             </div>
           </div>
         </div>
 
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 text-white">Frequently Asked Questions</h2>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <h3 className="font-semibold text-lg mb-2 text-white">
                 What's the difference between Credit Line and Secured Loan options?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-400">
                 Credit Line Booster provides a revolving credit line that you can use and pay back repeatedly. Secured
                 Loan Booster is an installment loan with fixed monthly payments that helps build your payment history.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2">How quickly will I see results?</h3>
-              <p className="text-gray-600">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <h3 className="font-semibold text-lg mb-2 text-white">How quickly will I see results?</h3>
+              <p className="text-gray-400">
                 Most users see their first credit score update within 30-60 days. Significant improvements typically
                 occur within 3-6 months of consistent on-time payments.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2">Can I switch plans later?</h3>
-              <p className="text-gray-600">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <h3 className="font-semibold text-lg mb-2 text-white">Can I switch plans later?</h3>
+              <p className="text-gray-400">
                 Yes! You can upgrade or downgrade your plan at any time. Changes will take effect on your next billing
                 cycle.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2">Is there a security deposit required?</h3>
-              <p className="text-gray-600">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <h3 className="font-semibold text-lg mb-2 text-white">Is there a security deposit required?</h3>
+              <p className="text-gray-400">
                 For secured loan options, yes - the loan amount serves as your security deposit. For credit lines, no
                 deposit is required.
               </p>
@@ -416,10 +416,10 @@ export default function ServicesPage() {
         </div>
         {isLoading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center">
+            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-sm mx-4 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-              <h3 className="text-lg font-semibold mb-2">Processing Payment</h3>
-              <p className="text-gray-600">Please wait while we set up your plan...</p>
+              <h3 className="text-lg font-semibold mb-2 text-white">Processing Payment</h3>
+              <p className="text-gray-400">Please wait while we set up your plan...</p>
             </div>
           </div>
         )}

@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
 import FooterNavigation from "@/components/footer-navigation"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Download, CreditCard, CheckCircle, Clock, DollarSign, Star } from "lucide-react"
-import Link from "next/link"
+import { Download, CreditCard, CheckCircle, Clock, DollarSign, Star } from "lucide-react"
 
 interface UserData {
   firstName: string
@@ -365,12 +364,6 @@ export default function PaymentHistoryPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm" className="bg-transparent">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment History</h1>
               <p className="text-gray-600">Track your payment timeline and billing history</p>
