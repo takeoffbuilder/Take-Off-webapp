@@ -266,7 +266,11 @@ export default function MyPlansPage() {
                       will stop all billing and remove access to these services.
                     </p>
                   </div>
-                  <Button variant="destructive" onClick={handleConfirmCancel} className="ml-4">
+                  <Button
+                    variant="destructive"
+                    onClick={handleConfirmCancel}
+                    className="ml-4 hover:bg-red-600 transition-colors"
+                  >
                     Confirm Cancellation
                   </Button>
                 </div>
@@ -391,7 +395,7 @@ export default function MyPlansPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent"
+                            className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent transition-colors"
                           >
                             <X className="h-4 w-4 mr-1" />
                             Cancel Boost
@@ -478,7 +482,7 @@ export default function MyPlansPage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Active Plans</h3>
             <p className="text-gray-600 mb-6">You don't have any active credit building plans yet.</p>
             <Link href="/services">
-              <Button className="bg-sky-500 hover:bg-sky-600">Choose Your Plan</Button>
+              <Button className="bg-sky-500 hover:bg-sky-600 transition-colors">Choose Your Plan</Button>
             </Link>
           </div>
         )}
@@ -495,7 +499,7 @@ export default function MyPlansPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/add-boost">
-                    <Button variant="secondary" size="lg" className="px-8">
+                    <Button variant="secondary" size="lg" className="px-8 hover:bg-gray-100 transition-colors">
                       <Plus className="h-4 w-4 mr-2" />
                       Add Another Boost
                     </Button>

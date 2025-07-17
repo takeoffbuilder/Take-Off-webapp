@@ -252,7 +252,7 @@ export default function AddBoostPage() {
                 className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
                   selectedCategory === "credit-line"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <CreditCard className="h-4 w-4" />
@@ -263,7 +263,7 @@ export default function AddBoostPage() {
                 className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
                   selectedCategory === "secured-loan"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <Shield className="h-4 w-4" />
@@ -328,7 +328,7 @@ export default function AddBoostPage() {
 
                 <Button
                   onClick={() => handleSelectBoost(boost.name, selectedCategory)}
-                  className={`w-full bg-gradient-to-r ${boost.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all mt-auto`}
+                  className={`w-full bg-gradient-to-r ${boost.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all mt-auto transform hover:scale-105`}
                 >
                   {boost.buttonText}
                   <ArrowRight className="h-4 w-4" />
@@ -376,13 +376,13 @@ export default function AddBoostPage() {
             Add 2 or more boosts and save 20% on your additional services. The more you boost, the faster you build!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" size="lg" className="px-8">
+            <Button variant="secondary" size="lg" className="px-8 hover:bg-gray-100 transition-colors">
               View Bundle Options
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="px-8 bg-transparent border-white text-white hover:bg-white hover:text-sky-600"
+              className="px-8 bg-transparent border-white text-white hover:bg-white hover:text-sky-600 transition-colors"
             >
               Contact Support
             </Button>

@@ -266,7 +266,7 @@ export default function SignInPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full"
+                  className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full transition-colors disabled:opacity-50"
                   disabled={isLoading || verificationCode.length !== 6}
                 >
                   {isLoading ? "Verifying..." : "Verify & Continue"}
@@ -279,7 +279,7 @@ export default function SignInPage() {
                   <button
                     onClick={resendCode}
                     disabled={isLoading}
-                    className="text-sky-400 hover:underline font-medium disabled:opacity-50"
+                    className="text-sky-400 hover:underline font-medium disabled:opacity-50 transition-colors"
                   >
                     {isLoading ? "Sending..." : "Resend Code"}
                   </button>
@@ -287,7 +287,7 @@ export default function SignInPage() {
 
                 <button
                   onClick={() => setStep("email")}
-                  className="flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300 mx-auto"
+                  className="flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300 mx-auto transition-colors"
                 >
                   ← Back to Email
                 </button>
@@ -338,7 +338,7 @@ export default function SignInPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full"
+                className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full transition-colors disabled:opacity-50"
                 disabled={isLoading}
               >
                 {isLoading ? "Sending Code..." : "Continue with Email"}
@@ -358,7 +358,7 @@ export default function SignInPage() {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700 transition-colors"
                   onClick={() => handleSocialSignIn("Google")}
                   type="button"
                 >
@@ -384,7 +384,7 @@ export default function SignInPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700 transition-colors"
                   onClick={() => handleSocialSignIn("Facebook")}
                   type="button"
                 >

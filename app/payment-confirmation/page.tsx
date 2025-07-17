@@ -224,7 +224,9 @@ export default function PaymentConfirmationPage() {
 
               {/* Name on Card */}
               <div>
-                <Label htmlFor="nameOnCard">Name on Card *</Label>
+                <Label htmlFor="nameOnCard" className="text-gray-900">
+                  Name on Card *
+                </Label>
                 <Input
                   id="nameOnCard"
                   value={paymentInfo.nameOnCard}
@@ -236,7 +238,9 @@ export default function PaymentConfirmationPage() {
 
               {/* Card Number */}
               <div>
-                <Label htmlFor="cardNumber">Card Number *</Label>
+                <Label htmlFor="cardNumber" className="text-gray-900">
+                  Card Number *
+                </Label>
                 <Input
                   id="cardNumber"
                   value={paymentInfo.cardNumber}
@@ -250,7 +254,9 @@ export default function PaymentConfirmationPage() {
               {/* Expiry Date and CVV */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="expiryDate">Expiry Date *</Label>
+                  <Label htmlFor="expiryDate" className="text-gray-900">
+                    Expiry Date *
+                  </Label>
                   <Input
                     id="expiryDate"
                     value={paymentInfo.expiryDate}
@@ -261,7 +267,9 @@ export default function PaymentConfirmationPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cvv">CVV *</Label>
+                  <Label htmlFor="cvv" className="text-gray-900">
+                    CVV *
+                  </Label>
                   <Input
                     id="cvv"
                     value={paymentInfo.cvv}
@@ -275,7 +283,9 @@ export default function PaymentConfirmationPage() {
 
               {/* Billing Zip Code */}
               <div>
-                <Label htmlFor="billingZip">Billing ZIP Code *</Label>
+                <Label htmlFor="billingZip" className="text-gray-900">
+                  Billing ZIP Code *
+                </Label>
                 <Input
                   id="billingZip"
                   value={paymentInfo.zipCode}
@@ -290,7 +300,7 @@ export default function PaymentConfirmationPage() {
               <Button
                 onClick={handleConfirmPayment}
                 disabled={isProcessing || !validatePaymentInfo()}
-                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white py-4 rounded-full font-medium flex items-center justify-center gap-2 text-lg"
+                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white py-4 rounded-full font-medium flex items-center justify-center gap-2 text-lg transition-all disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>

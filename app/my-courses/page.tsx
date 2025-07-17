@@ -237,7 +237,7 @@ export default function MyCoursesPage() {
         {/* Download Status */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <BookOpen className="h-5 w-5 text-sky-500" />
               Course Access Status
             </CardTitle>
@@ -262,7 +262,7 @@ export default function MyCoursesPage() {
                   You need an active plan to access courses. Purchase a plan to unlock educational content.
                 </div>
                 <Link href="/plans">
-                  <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
+                  <Button size="sm" className="bg-orange-500 hover:bg-orange-600 transition-colors">
                     View Plans
                   </Button>
                 </Link>
@@ -298,7 +298,7 @@ export default function MyCoursesPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className={`text-lg mb-2 ${isLocked ? "text-gray-500" : "text-gray-900"}`}>
+                      <CardTitle className={`text-lg mb-2 ${isLocked ? "text-gray-500" : "text-white"}`}>
                         {course.title}
                       </CardTitle>
                       <div className="flex flex-wrap gap-2 mb-3">
@@ -328,7 +328,7 @@ export default function MyCoursesPage() {
                 </CardHeader>
 
                 <CardContent>
-                  <p className={`text-sm mb-4 ${isLocked ? "text-gray-400" : "text-gray-600"}`}>{course.description}</p>
+                  <p className={`text-sm mb-4 ${isLocked ? "text-gray-400" : "text-white"}`}>{course.description}</p>
 
                   <div className={`text-xs mb-4 ${isLocked ? "text-gray-400" : "text-gray-500"}`}>
                     Estimated time: {course.estimatedTime}
@@ -340,7 +340,10 @@ export default function MyCoursesPage() {
                       Downloaded
                     </Button>
                   ) : canDownloadCourse ? (
-                    <Button onClick={() => handleDownload(course)} className="w-full bg-sky-500 hover:bg-sky-600">
+                    <Button
+                      onClick={() => handleDownload(course)}
+                      className="w-full bg-sky-500 hover:bg-sky-600 transition-colors"
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
@@ -360,12 +363,12 @@ export default function MyCoursesPage() {
         {downloadedCourses.length >= availableDownloads && availableDownloads > 0 && (
           <Card className="mt-8 bg-gradient-to-br from-sky-500 to-sky-600 text-white">
             <CardContent className="p-6 text-center">
-              <h3 className="font-semibold text-xl mb-2">Want More Courses?</h3>
+              <h3 className="font-semibold text-xl mb-2 text-white">Want More Courses?</h3>
               <p className="text-sky-100 mb-4">
                 Unlock additional educational content by adding more Boost Plans to your account
               </p>
               <Link href="/add-boost">
-                <Button variant="secondary" className="bg-white text-sky-600 hover:bg-gray-100">
+                <Button variant="secondary" className="bg-white text-sky-600 hover:bg-gray-100 transition-colors">
                   Add Boost Plan
                 </Button>
               </Link>

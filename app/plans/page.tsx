@@ -2,9 +2,8 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
-import { Check, Star, CreditCard, Shield, ArrowRight } from "lucide-react"
+import { Check, CreditCard, Shield, ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function PlansPage() {
@@ -21,16 +20,17 @@ export default function PlansPage() {
       features: [
         "$1,500 credit line",
         "Monthly credit reporting",
-        "1 bureau credit report access",
+        "1 Bureau Credit Report Access",
         "Basic credit monitoring",
         "Mobile app access",
         "Email support",
         "Automatic payments",
       ],
-      popular: false,
       buttonText: "Choose Starter",
-      gradient: "from-blue-500 to-blue-600",
-      borderColor: "border-blue-200",
+      buttonColor: "bg-blue-500 hover:bg-blue-600",
+      borderColor: "border-blue-500",
+      checkColor: "text-blue-400",
+      priceColor: "text-blue-400",
     },
     {
       name: "Power Boost",
@@ -41,17 +41,18 @@ export default function PlansPage() {
       features: [
         "$2,500 credit line",
         "Tri-bureau credit reporting",
-        "2 bureau credit report access",
+        "2 Bureau Credit Report Access",
         "Advanced credit monitoring",
         "Credit score alerts",
         "Priority support",
         "Financial education resources",
         "Rent payment reporting",
       ],
-      popular: true,
       buttonText: "Choose Power",
-      gradient: "from-sky-500 to-sky-600",
-      borderColor: "border-sky-300",
+      buttonColor: "bg-cyan-500 hover:bg-cyan-600",
+      borderColor: "border-cyan-400",
+      checkColor: "text-cyan-400",
+      priceColor: "text-cyan-400",
     },
     {
       name: "Max Boost",
@@ -62,7 +63,7 @@ export default function PlansPage() {
       features: [
         "$3,500 credit line",
         "Tri-bureau reporting",
-        "3 bureau credit report access",
+        "3 Bureau Credit Report Access",
         "Real-time credit monitoring",
         "Credit coaching sessions",
         "Dedicated support",
@@ -70,10 +71,11 @@ export default function PlansPage() {
         "Credit dispute assistance",
         "Utility bill reporting",
       ],
-      popular: false,
       buttonText: "Choose Max",
-      gradient: "from-purple-500 to-purple-600",
-      borderColor: "border-purple-200",
+      buttonColor: "bg-purple-500 hover:bg-purple-600",
+      borderColor: "border-purple-500",
+      checkColor: "text-purple-400",
+      priceColor: "text-purple-400",
     },
   ]
 
@@ -88,15 +90,16 @@ export default function PlansPage() {
         "$1,500 secured loan",
         "12-24 month terms",
         "Monthly credit reporting",
-        "1 bureau credit report access",
+        "1 Bureau Credit Report Access",
         "Fixed interest rate",
         "Automatic payments",
         "Email support",
       ],
-      popular: false,
       buttonText: "Choose Starter",
-      gradient: "from-green-500 to-green-600",
-      borderColor: "border-green-200",
+      buttonColor: "bg-green-500 hover:bg-green-600",
+      borderColor: "border-green-500",
+      checkColor: "text-green-400",
+      priceColor: "text-green-400",
     },
     {
       name: "Power Boost",
@@ -108,16 +111,17 @@ export default function PlansPage() {
         "$2,500 secured loan",
         "12-36 month terms",
         "Tri-bureau credit reporting",
-        "2 bureau credit report access",
+        "2 Bureau Credit Report Access",
         "Competitive interest rate",
         "Flexible payment options",
         "Priority support",
         "Credit education resources",
       ],
-      popular: true,
       buttonText: "Choose Power",
-      gradient: "from-emerald-500 to-emerald-600",
-      borderColor: "border-emerald-200",
+      buttonColor: "bg-emerald-500 hover:bg-emerald-600",
+      borderColor: "border-emerald-400",
+      checkColor: "text-emerald-400",
+      priceColor: "text-emerald-400",
     },
     {
       name: "Max Boost",
@@ -129,17 +133,18 @@ export default function PlansPage() {
         "$3,500 secured loan",
         "12-48 month terms",
         "Tri-bureau reporting",
-        "3 bureau credit report access",
+        "3 Bureau Credit Report Access",
         "Best interest rates",
         "Custom payment plans",
         "Dedicated support",
         "Credit coaching included",
         "Early payoff options",
       ],
-      popular: false,
       buttonText: "Choose Max",
-      gradient: "from-teal-500 to-teal-600",
-      borderColor: "border-teal-200",
+      buttonColor: "bg-teal-500 hover:bg-teal-600",
+      borderColor: "border-teal-500",
+      checkColor: "text-teal-400",
+      priceColor: "text-teal-400",
     },
   ]
 
@@ -200,7 +205,7 @@ export default function PlansPage() {
                 className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
                   selectedCategory === "credit-line"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <CreditCard className="h-4 w-4" />
@@ -211,7 +216,7 @@ export default function PlansPage() {
                 className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
                   selectedCategory === "secured-loan"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <Shield className="h-4 w-4" />
@@ -226,49 +231,36 @@ export default function PlansPage() {
           {currentOptions.map((plan, index) => (
             <Card
               key={index}
-              className={`relative overflow-hidden ${
-                plan.popular ? `ring-2 ring-sky-400 shadow-xl ${plan.borderColor}` : `border-2 ${plan.borderColor}`
-              } hover:shadow-xl transition-all duration-300`}
+              className={`relative overflow-hidden bg-slate-800 border-2 ${plan.borderColor} hover:shadow-2xl transition-all duration-300`}
             >
-              {plan.popular && (
-                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-lg border-2 border-white flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-current" />
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
-
-              <div className={`h-1 bg-gradient-to-r ${plan.gradient}`}></div>
-
-              <CardHeader className="text-center pb-4 pt-10">
-                <CardTitle className="text-xl font-bold mb-2">{plan.name}</CardTitle>
+              <CardHeader className="text-center pb-6 pt-8">
+                <CardTitle className="text-2xl font-bold mb-4 text-white">{plan.name}</CardTitle>
                 <div className="mb-4">
-                  <div className="text-3xl font-bold text-gray-900 mb-1">{plan.creditLimit}</div>
-                  <div className="text-sm text-gray-500 mb-3">
+                  <div className="text-4xl font-bold text-white mb-2">{plan.creditLimit}</div>
+                  <div className="text-gray-400 text-sm mb-4">
                     {selectedCategory === "credit-line" ? "Credit Line" : "Loan Amount"}
                   </div>
                   <div className="flex items-center justify-center gap-1">
-                    <span className="text-2xl font-bold text-sky-600">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
+                    <span className={`text-3xl font-bold ${plan.priceColor}`}>{plan.price}</span>
+                    <span className="text-gray-400">{plan.period}</span>
                   </div>
                 </div>
-                <p className="text-gray-600 text-sm">{plan.description}</p>
+                <p className="text-gray-300 text-sm">{plan.description}</p>
               </CardHeader>
 
-              <CardContent className="pt-0">
-                <ul className="space-y-3 mb-6">
+              <CardContent className="pt-0 px-6 pb-6">
+                <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-3">
-                      <Check className="h-4 w-4 text-sky-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700 text-sm">{feature}</span>
+                      <Check className={`h-5 w-5 ${plan.checkColor} flex-shrink-0 mt-0.5`} />
+                      <span className="text-gray-200 text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button
                   onClick={() => handleSelectPlan(plan.name, selectedCategory)}
-                  className={`w-full bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all`}
+                  className={`w-full ${plan.buttonColor} text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all transform hover:scale-105`}
                 >
                   {plan.buttonText}
                   <ArrowRight className="h-4 w-4" />

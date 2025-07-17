@@ -249,7 +249,9 @@ export default function PaymentPage() {
                       <div className="ml-6 space-y-4 p-4 border rounded-lg bg-gray-50">
                         <div className="grid grid-cols-1 gap-4">
                           <div>
-                            <Label htmlFor="cardNumber">Card Number</Label>
+                            <Label htmlFor="cardNumber" className="text-gray-900">
+                              Card Number
+                            </Label>
                             <Input
                               id="cardNumber"
                               placeholder="1234 5678 9012 3456"
@@ -261,7 +263,9 @@ export default function PaymentPage() {
 
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <Label htmlFor="expiryDate">Expiry Date</Label>
+                              <Label htmlFor="expiryDate" className="text-gray-900">
+                                Expiry Date
+                              </Label>
                               <Input
                                 id="expiryDate"
                                 placeholder="MM/YY"
@@ -271,7 +275,9 @@ export default function PaymentPage() {
                               />
                             </div>
                             <div>
-                              <Label htmlFor="cvv">CVV</Label>
+                              <Label htmlFor="cvv" className="text-gray-900">
+                                CVV
+                              </Label>
                               <Input
                                 id="cvv"
                                 placeholder="123"
@@ -283,7 +289,9 @@ export default function PaymentPage() {
                           </div>
 
                           <div>
-                            <Label htmlFor="cardholderName">Cardholder Name</Label>
+                            <Label htmlFor="cardholderName" className="text-gray-900">
+                              Cardholder Name
+                            </Label>
                             <Input
                               id="cardholderName"
                               placeholder="John Doe"
@@ -293,7 +301,9 @@ export default function PaymentPage() {
                           </div>
 
                           <div>
-                            <Label htmlFor="zipCode">ZIP Code</Label>
+                            <Label htmlFor="zipCode" className="text-gray-900">
+                              ZIP Code
+                            </Label>
                             <Input
                               id="zipCode"
                               placeholder="12345"
@@ -335,7 +345,7 @@ export default function PaymentPage() {
                       Set up AutoPay to ensure your payments are always on time and maintain your perfect payment
                       history.
                     </p>
-                    <Button variant="outline" size="sm" className="bg-transparent">
+                    <Button variant="outline" size="sm" className="bg-transparent hover:bg-gray-50 transition-colors">
                       Enable AutoPay
                     </Button>
                   </div>
@@ -379,7 +389,7 @@ export default function PaymentPage() {
                   <Button
                     onClick={handlePayment}
                     disabled={!isFormValid() || isProcessing}
-                    className="w-full bg-sky-500 hover:bg-sky-600"
+                    className="w-full bg-sky-500 hover:bg-sky-600 transition-colors disabled:opacity-50"
                   >
                     {isProcessing ? (
                       <div className="flex items-center gap-2">

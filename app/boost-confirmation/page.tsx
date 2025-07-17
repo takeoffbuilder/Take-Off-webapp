@@ -336,13 +336,13 @@ export default function BoostConfirmationPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/add-boost">
-            <Button variant="outline" size="lg" className="px-8 bg-transparent">
+            <Button variant="outline" size="lg" className="px-8 bg-transparent hover:bg-gray-50 transition-colors">
               Back to Plans
             </Button>
           </Link>
           <Button
             size="lg"
-            className="px-8 bg-sky-500 hover:bg-sky-600"
+            className="px-8 bg-sky-500 hover:bg-sky-600 transition-colors disabled:opacity-50"
             onClick={handleConfirmPlan}
             disabled={isConfirming}
           >

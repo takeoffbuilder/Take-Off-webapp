@@ -153,7 +153,7 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <div className="text-4xl font-bold text-gray-900 mb-1">675</div>
+                    <div className="text-4xl font-bold text-sky-500 mb-1">675</div>
                     <div className="text-sm text-sky-500 font-medium">+12 points this month</div>
                     <div className="text-xs text-gray-500">Last updated today</div>
                   </div>
@@ -349,7 +349,10 @@ export default function DashboardPage() {
                       </div>
                       <div className="mt-4 pt-3 border-t border-sky-200">
                         <Link href="/payment">
-                          <Button size="sm" className="bg-sky-500 hover:bg-sky-600 text-xs px-3 py-1 h-7">
+                          <Button
+                            size="sm"
+                            className="bg-sky-500 hover:bg-sky-600 text-xs px-3 py-1 h-7 transition-colors"
+                          >
                             Pay Now - $25.00
                           </Button>
                         </Link>
@@ -403,7 +406,10 @@ export default function DashboardPage() {
                           </div>
                           <div className="mt-4 pt-3 border-t border-green-200">
                             <Link href="/payment">
-                              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-xs px-3 py-1 h-7">
+                              <Button
+                                size="sm"
+                                className="bg-green-500 hover:bg-green-600 text-xs px-3 py-1 h-7 transition-colors"
+                              >
                                 Pay Now - {boost.price}
                               </Button>
                             </Link>
@@ -424,7 +430,7 @@ export default function DashboardPage() {
                   Accelerate your credit building with additional services and faster results
                 </p>
                 <Link href="/add-boost">
-                  <Button variant="secondary" size="sm" className="w-full">
+                  <Button variant="secondary" size="sm" className="w-full hover:bg-gray-100 transition-colors">
                     Add a Boost
                   </Button>
                 </Link>
@@ -438,25 +444,37 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Link href="/my-courses">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <BookOpen className="h-4 w-4 mr-2" />
                     My Courses
                   </Button>
                 </Link>
                 <Link href="/transactions">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <CreditCard className="h-4 w-4 mr-2" />
                     View Transactions
                   </Button>
                 </Link>
                 <Link href="/payment-history">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <History className="h-4 w-4 mr-2" />
                     Payment History
                   </Button>
                 </Link>
                 <Link href="/support">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <HelpCircle className="h-4 w-4 mr-2" />
                     Support
                   </Button>

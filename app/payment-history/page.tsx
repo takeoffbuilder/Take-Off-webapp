@@ -370,7 +370,7 @@ export default function PaymentHistoryPage() {
             </div>
           </div>
           <Button
-            className="bg-sky-500 hover:bg-sky-600 disabled:opacity-50"
+            className="bg-sky-500 hover:bg-sky-600 disabled:opacity-50 transition-colors"
             onClick={handleExportHistory}
             disabled={isExporting}
           >
@@ -385,8 +385,8 @@ export default function PaymentHistoryPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Paid</p>
-                  <p className="text-2xl font-bold text-gray-900">${totalPaid.toFixed(2)}</p>
+                  <p className="text-sm text-white">Total Paid</p>
+                  <p className="text-2xl font-bold text-white">${totalPaid.toFixed(2)}</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-500" />
               </div>
@@ -397,8 +397,8 @@ export default function PaymentHistoryPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Successful Payments</p>
-                  <p className="text-2xl font-bold text-gray-900">{successfulPayments}</p>
+                  <p className="text-sm text-white">Successful Payments</p>
+                  <p className="text-2xl font-bold text-white">{successfulPayments}</p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-green-500" />
               </div>
@@ -409,8 +409,8 @@ export default function PaymentHistoryPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Failed Payments</p>
-                  <p className="text-2xl font-bold text-gray-900">{failedPayments}</p>
+                  <p className="text-sm text-white">Failed Payments</p>
+                  <p className="text-2xl font-bold text-white">{failedPayments}</p>
                 </div>
                 <Clock className="h-8 w-8 text-red-500" />
               </div>

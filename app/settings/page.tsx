@@ -76,7 +76,6 @@ export default function SettingsPage() {
   const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
-    push: true,
     marketing: false,
   })
   const router = useRouter()
@@ -623,17 +622,31 @@ export default function SettingsPage() {
                   Profile Information
                 </CardTitle>
                 {!isEditing ? (
-                  <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="bg-transparent">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                    className="bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
                   </Button>
                 ) : (
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleCancelEdit} className="bg-transparent">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="bg-transparent hover:bg-gray-50 transition-colors"
+                    >
                       <X className="h-4 w-4 mr-2" />
                       Cancel
                     </Button>
-                    <Button size="sm" onClick={handleSaveProfile} className="bg-sky-500 hover:bg-sky-600">
+                    <Button
+                      size="sm"
+                      onClick={handleSaveProfile}
+                      className="bg-sky-500 hover:bg-sky-600 transition-colors"
+                    >
                       <Save className="h-4 w-4 mr-2" />
                       Save
                     </Button>
@@ -645,118 +658,100 @@ export default function SettingsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName">First Name</Label>
-                  {isEditing ? (
-                    <Input
-                      id="firstName"
-                      value={editedData?.firstName || ""}
-                      onChange={(e) => setEditedData((prev) => (prev ? { ...prev, firstName: e.target.value } : null))}
-                    />
-                  ) : (
-                    <p className="mt-1 text-gray-900">{userData?.firstName}</p>
-                  )}
+                  <Input
+                    id="firstName"
+                    value={isEditing ? editedData?.firstName || "" : userData?.firstName || ""}
+                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, firstName: e.target.value } : null))}
+                    disabled={!isEditing}
+                    className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="lastName">Last Name</Label>
-                  {isEditing ? (
-                    <Input
-                      id="lastName"
-                      value={editedData?.lastName || ""}
-                      onChange={(e) => setEditedData((prev) => (prev ? { ...prev, lastName: e.target.value } : null))}
-                    />
-                  ) : (
-                    <p className="mt-1 text-gray-900">{userData?.lastName}</p>
-                  )}
+                  <Input
+                    id="lastName"
+                    value={isEditing ? editedData?.lastName || "" : userData?.lastName || ""}
+                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, lastName: e.target.value } : null))}
+                    disabled={!isEditing}
+                    className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                  />
                 </div>
               </div>
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                {isEditing ? (
-                  <Input
-                    id="email"
-                    type="email"
-                    value={editedData?.email || ""}
-                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, email: e.target.value } : null))}
-                  />
-                ) : (
-                  <p className="mt-1 text-gray-900">{userData?.email}</p>
-                )}
+                <Input
+                  id="email"
+                  type="email"
+                  value={isEditing ? editedData?.email || "" : userData?.email || ""}
+                  onChange={(e) => setEditedData((prev) => (prev ? { ...prev, email: e.target.value } : null))}
+                  disabled={!isEditing}
+                  className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                />
               </div>
               <div>
                 <Label htmlFor="phone">Phone Number</Label>
-                {isEditing ? (
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={editedData?.phone || ""}
-                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, phone: e.target.value } : null))}
-                  />
-                ) : (
-                  <p className="mt-1 text-gray-900">{userData?.phone}</p>
-                )}
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={isEditing ? editedData?.phone || "" : userData?.phone || ""}
+                  onChange={(e) => setEditedData((prev) => (prev ? { ...prev, phone: e.target.value } : null))}
+                  disabled={!isEditing}
+                  className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                />
               </div>
 
               {/* Address Fields */}
               <div>
                 <Label htmlFor="streetAddress">Street Address</Label>
-                {isEditing ? (
-                  <Input
-                    id="streetAddress"
-                    type="text"
-                    value={editedData?.streetAddress || ""}
-                    onChange={(e) =>
-                      setEditedData((prev) => (prev ? { ...prev, streetAddress: e.target.value } : null))
-                    }
-                    placeholder="123 Main Street"
-                  />
-                ) : (
-                  <p className="mt-1 text-gray-900">{userData?.streetAddress || "Not provided"}</p>
-                )}
+                <Input
+                  id="streetAddress"
+                  type="text"
+                  value={isEditing ? editedData?.streetAddress || "" : userData?.streetAddress || ""}
+                  onChange={(e) => setEditedData((prev) => (prev ? { ...prev, streetAddress: e.target.value } : null))}
+                  placeholder="123 Main Street"
+                  disabled={!isEditing}
+                  className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="city">City</Label>
-                  {isEditing ? (
-                    <Input
-                      id="city"
-                      type="text"
-                      value={editedData?.city || ""}
-                      onChange={(e) => setEditedData((prev) => (prev ? { ...prev, city: e.target.value } : null))}
-                      placeholder="New York"
-                    />
-                  ) : (
-                    <p className="mt-1 text-gray-900">{userData?.city || "Not provided"}</p>
-                  )}
+                  <Input
+                    id="city"
+                    type="text"
+                    value={isEditing ? editedData?.city || "" : userData?.city || ""}
+                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, city: e.target.value } : null))}
+                    placeholder="New York"
+                    disabled={!isEditing}
+                    className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="state">State</Label>
-                  {isEditing ? (
-                    <Input
-                      id="state"
-                      type="text"
-                      value={editedData?.state || ""}
-                      onChange={(e) => setEditedData((prev) => (prev ? { ...prev, state: e.target.value } : null))}
-                      placeholder="NY"
-                      maxLength={2}
-                    />
-                  ) : (
-                    <p className="mt-1 text-gray-900">{userData?.state || "Not provided"}</p>
-                  )}
+                  <Input
+                    id="state"
+                    type="text"
+                    value={isEditing ? editedData?.state || "" : userData?.state || ""}
+                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, state: e.target.value } : null))}
+                    placeholder="NY"
+                    maxLength={2}
+                    disabled={!isEditing}
+                    className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="zipCode">ZIP Code</Label>
-                  {isEditing ? (
-                    <Input
-                      id="zipCode"
-                      type="text"
-                      value={editedData?.zipCode || ""}
-                      onChange={(e) => setEditedData((prev) => (prev ? { ...prev, zipCode: e.target.value } : null))}
-                      placeholder="10001"
-                      maxLength={10}
-                    />
-                  ) : (
-                    <p className="mt-1 text-gray-900">{userData?.zipCode || "Not provided"}</p>
-                  )}
+                  <Input
+                    id="zipCode"
+                    type="text"
+                    value={isEditing ? editedData?.zipCode || "" : userData?.zipCode || ""}
+                    onChange={(e) => setEditedData((prev) => (prev ? { ...prev, zipCode: e.target.value } : null))}
+                    placeholder="10001"
+                    maxLength={10}
+                    disabled={!isEditing}
+                    className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                  />
                 </div>
               </div>
 
@@ -777,11 +772,13 @@ export default function SettingsPage() {
                 </CardTitle>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="text-lg font-bold text-gray-900">${getTotalMonthlyBilling().toFixed(2)}</div>
+                    <CardTitle className="text-lg font-bold text-gray-900">
+                      ${getTotalMonthlyBilling().toFixed(2)}
+                    </CardTitle>
                     <div className="text-sm text-gray-500">Total monthly</div>
                   </div>
                   <Link href="/my-plans">
-                    <Button variant="outline" size="sm" className="bg-transparent">
+                    <Button variant="outline" size="sm" className="bg-transparent hover:bg-gray-50 transition-colors">
                       View All
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
@@ -815,7 +812,7 @@ export default function SettingsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleCancelClick(mainPlan.id)}
-                          className="border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition-colors"
+                          className="border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 transition-colors"
                         >
                           <X className="h-4 w-4 mr-1" />
                           Cancel
@@ -865,7 +862,7 @@ export default function SettingsPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleCancelClick(boost.id)}
-                              className="border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition-colors"
+                              className="border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 transition-colors"
                             >
                               <X className="h-4 w-4 mr-1" />
                               Cancel
@@ -909,7 +906,7 @@ export default function SettingsPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No Active Plans</h3>
                     <p className="text-gray-600 mb-4">You don't have any active credit building plans yet.</p>
                     <Link href="/services">
-                      <Button className="bg-sky-500 hover:bg-sky-600">Choose Your Plan</Button>
+                      <Button className="bg-sky-500 hover:bg-sky-600 transition-colors">Choose Your Plan</Button>
                     </Link>
                   </div>
                 )}
@@ -952,18 +949,6 @@ export default function SettingsPage() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="push-notifications">Push Notifications</Label>
-                  <p className="text-sm text-gray-600">Receive push notifications on your mobile device</p>
-                </div>
-                <Switch
-                  id="push-notifications"
-                  checked={notifications.push}
-                  onCheckedChange={(checked) => setNotifications((prev) => ({ ...prev, push: checked }))}
-                />
-              </div>
-              <Separator />
-              <div className="flex items-center justify-between">
-                <div>
                   <Label htmlFor="marketing-notifications">Marketing Communications</Label>
                   <p className="text-sm text-gray-600">Receive tips and offers to improve your credit</p>
                 </div>
@@ -1001,7 +986,7 @@ export default function SettingsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-transparent"
+                  className="bg-transparent hover:bg-gray-50 transition-colors"
                   onClick={userData?.twoFactorEnabled ? handle2FADisable : handle2FASetup}
                 >
                   {userData?.twoFactorEnabled ? (
@@ -1043,7 +1028,12 @@ export default function SettingsPage() {
                     Expires {paymentMethod.expiryMonth}/{paymentMethod.expiryYear}
                   </p>
                 </div>
-                <Button variant="outline" size="sm" className="bg-transparent" onClick={handleUpdateCard}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-transparent hover:bg-gray-50 transition-colors"
+                  onClick={handleUpdateCard}
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   Update Card
                 </Button>
@@ -1075,7 +1065,12 @@ export default function SettingsPage() {
                   <Label className="text-red-600">Delete Account</Label>
                   <p className="text-sm text-gray-600">Permanently delete your account and all data</p>
                 </div>
-                <Button variant="destructive" size="sm" onClick={() => setShowDeleteDialog(true)}>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="hover:bg-red-600 transition-colors"
+                >
                   Delete Account
                 </Button>
               </div>
@@ -1120,12 +1115,16 @@ export default function SettingsPage() {
               <div className="flex gap-3">
                 <Button
                   onClick={() => cancelSubscription(showCancelDialog)}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white transition-colors"
                 >
                   <X className="h-4 w-4 mr-2" />
                   Yes, Cancel Plan
                 </Button>
-                <Button onClick={() => setShowCancelDialog(null)} variant="outline" className="flex-1 bg-transparent">
+                <Button
+                  onClick={() => setShowCancelDialog(null)}
+                  variant="outline"
+                  className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
+                >
                   Keep Plan
                 </Button>
               </div>
@@ -1162,11 +1161,15 @@ export default function SettingsPage() {
                     <Button
                       onClick={sendVerificationCode}
                       disabled={is2FALoading}
-                      className="flex-1 bg-sky-500 hover:bg-sky-600 text-white"
+                      className="flex-1 bg-sky-500 hover:bg-sky-600 text-white transition-colors"
                     >
                       {is2FALoading ? "Sending..." : "Send Verification Code"}
                     </Button>
-                    <Button onClick={close2FADialog} variant="outline" className="flex-1 bg-transparent">
+                    <Button
+                      onClick={close2FADialog}
+                      variant="outline"
+                      className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
+                    >
                       Cancel
                     </Button>
                   </div>
@@ -1199,11 +1202,15 @@ export default function SettingsPage() {
                     <Button
                       onClick={verifyAndEnable2FA}
                       disabled={is2FALoading || verificationCode.length !== 6}
-                      className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                      className="flex-1 bg-green-500 hover:bg-green-600 text-white transition-colors"
                     >
                       {is2FALoading ? "Verifying..." : "Enable 2FA"}
                     </Button>
-                    <Button onClick={close2FADialog} variant="outline" className="flex-1 bg-transparent">
+                    <Button
+                      onClick={close2FADialog}
+                      variant="outline"
+                      className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
+                    >
                       Cancel
                     </Button>
                   </div>
@@ -1223,11 +1230,15 @@ export default function SettingsPage() {
                     <Button
                       onClick={disable2FA}
                       disabled={is2FALoading}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white transition-colors"
                     >
                       {is2FALoading ? "Disabling..." : "Disable 2FA"}
                     </Button>
-                    <Button onClick={close2FADialog} variant="outline" className="flex-1 bg-transparent">
+                    <Button
+                      onClick={close2FADialog}
+                      variant="outline"
+                      className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
+                    >
                       Keep Enabled
                     </Button>
                   </div>
@@ -1364,7 +1375,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={updatePaymentMethod}
                   disabled={isUpdatingCard}
-                  className="flex-1 bg-sky-500 hover:bg-sky-600 text-white"
+                  className="flex-1 bg-sky-500 hover:bg-sky-600 text-white transition-colors"
                 >
                   {isUpdatingCard ? (
                     <>
@@ -1378,7 +1389,11 @@ export default function SettingsPage() {
                     </>
                   )}
                 </Button>
-                <Button onClick={closeUpdateCardDialog} variant="outline" className="flex-1 bg-transparent">
+                <Button
+                  onClick={closeUpdateCardDialog}
+                  variant="outline"
+                  className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
+                >
                   Cancel
                 </Button>
               </div>
@@ -1441,7 +1456,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleDeleteAccount}
                   disabled={isDeleting || deleteConfirmText !== "DELETE"}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white transition-colors"
                 >
                   {isDeleting ? (
                     <>
@@ -1458,7 +1473,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={closeDeleteDialog}
                   variant="outline"
-                  className="flex-1 bg-transparent"
+                  className="flex-1 bg-transparent hover:bg-gray-50 transition-colors"
                   disabled={isDeleting}
                 >
                   Cancel

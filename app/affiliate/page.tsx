@@ -74,15 +74,10 @@ export default function AffiliatePage() {
             Earn $10 for every friend you refer to Take Off. Help others build better credit while building your income.
             It's a win-win for everyone.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Link href="/affiliate/join">
               <Button className="bg-sky-500 hover:bg-sky-600 text-white px-8 py-3 rounded-full text-lg">
                 Join the Program
-              </Button>
-            </Link>
-            <Link href="#how-it-works">
-              <Button variant="outline" className="px-8 py-3 rounded-full text-lg bg-transparent">
-                Learn How It Works
               </Button>
             </Link>
           </div>

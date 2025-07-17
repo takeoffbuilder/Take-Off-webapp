@@ -22,7 +22,6 @@ export default function HomePage() {
                   {/* Status Bar */}
                   <div className="flex items-center justify-between px-6 py-3 text-xs font-medium text-white">
                     <span>9:41</span>
-                    <div className="w-20 h-6 bg-white rounded-full"></div>
                     <div className="flex items-center gap-1">
                       <div className="flex gap-1">
                         <div className="w-1 h-3 bg-white rounded-full"></div>
@@ -155,9 +154,6 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Home Indicator */}
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full"></div>
                 </div>
               </div>
             </div>
@@ -171,6 +167,9 @@ export default function HomePage() {
                 with Take Off!
               </h1>
 
+              {/* New Slogan */}
+              <p className="text-xl lg:text-2xl font-semibold text-sky-400 mb-8">Add Multiple Credit Builder Lines</p>
+
               {/* Add the moon logo image */}
               <div className="flex justify-center lg:justify-start mb-8">
                 <img
@@ -182,7 +181,7 @@ export default function HomePage() {
 
               <p className="text-lg text-gray-300 mb-2">No credit checks, hidden fees, or interest.</p>
 
-              <p className="text-lg font-semibold text-white mb-8">Plans from $10/month</p>
+              <p className="text-lg font-semibold text-white mb-8">Plans from $15/month</p>
 
               <Link href="/plans">
                 <Button className="w-full lg:w-auto bg-sky-500 hover:bg-sky-600 text-white px-12 py-6 text-lg rounded-full">
@@ -235,7 +234,7 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-gray-800">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
-            Plans from <span className="font-bold text-sky-400">$10/month</span>
+            Plans from <span className="font-bold text-sky-400">$15/month</span>
           </h2>
 
           <div className="flex justify-center">
@@ -244,7 +243,6 @@ export default function HomePage() {
                 {/* Status Bar */}
                 <div className="flex items-center justify-between px-6 py-3 text-xs font-medium text-white">
                   <span>9:41</span>
-                  <div className="w-20 h-6 bg-white rounded-full"></div>
                   <div className="flex items-center gap-1">
                     <div className="flex gap-1">
                       <div className="w-1 h-3 bg-white rounded-full"></div>

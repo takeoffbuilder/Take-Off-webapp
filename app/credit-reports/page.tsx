@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Header from "@/components/header"
 import FooterNavigation from "@/components/footer-navigation"
 import { useRouter } from "next/navigation"
-import { TrendingUp, Download, Calendar, AlertTriangle, CheckCircle, CreditCard, Eye, FileText } from "lucide-react"
+import { TrendingUp, Download, Calendar, AlertTriangle, CheckCircle, CreditCard, FileText } from "lucide-react"
 
 interface UserData {
   firstName: string
@@ -114,8 +114,8 @@ export default function CreditReportsPage() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Credit Reports</h1>
-              <p className="text-gray-600">Monitor your credit health and track improvements</p>
+              <h1 className="text-3xl font-bold text-sky-500 mb-2">Credit Reports</h1>
+              <p className="text-sky-400">Monitor your credit health and track improvements</p>
             </div>
           </div>
           <Button className="bg-sky-500 hover:bg-sky-600">
@@ -138,9 +138,9 @@ export default function CreditReportsPage() {
               <CardContent>
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <div className="text-5xl font-bold text-gray-900 mb-2">675</div>
+                    <div className="text-5xl font-bold text-sky-500 mb-2">675</div>
                     <div className="text-lg text-sky-500 font-medium mb-1">+12 points this month</div>
-                    <div className="text-sm text-gray-500">Last updated: {new Date().toLocaleDateString()}</div>
+                    <div className="text-sm text-sky-300">Last updated: {new Date().toLocaleDateString()}</div>
                   </div>
                   <div className="relative w-40 h-40">
                     <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
@@ -159,7 +159,7 @@ export default function CreditReportsPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
                         <div className="text-3xl font-bold">675</div>
-                        <div className="text-sm text-gray-500">Good</div>
+                        <div className="text-sm text-sky-300">Good</div>
                       </div>
                     </div>
                   </div>
@@ -167,7 +167,7 @@ export default function CreditReportsPage() {
 
                 {/* Score Range */}
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <div className="flex justify-between text-sm text-sky-400 mb-2">
                     <span>Poor</span>
                     <span>Fair</span>
                     <span>Good</span>
@@ -180,7 +180,7 @@ export default function CreditReportsPage() {
                       style={{ left: `${(675 / 850) * 100}%`, transform: "translateX(-50%) translateY(-2px)" }}
                     ></div>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs text-sky-300 mt-1">
                     <span>300</span>
                     <span>850</span>
                   </div>
@@ -192,7 +192,7 @@ export default function CreditReportsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Credit Score Factors</CardTitle>
-                <p className="text-sm text-gray-600">Understanding what impacts your credit score</p>
+                <p className="text-sm text-sky-400">Understanding what impacts your credit score</p>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -217,10 +217,10 @@ export default function CreditReportsPage() {
                         ))}
                         {/* Center circle with overall health */}
                         <circle cx="150" cy="150" r="50" fill="white" stroke="#e5e7eb" strokeWidth="2" />
-                        <text x="150" y="145" textAnchor="middle" className="text-2xl font-bold fill-gray-900">
+                        <text x="150" y="145" textAnchor="middle" className="text-2xl font-bold fill-sky-500">
                           {overallCreditHealth}%
                         </text>
-                        <text x="150" y="165" textAnchor="middle" className="text-sm fill-gray-600">
+                        <text x="150" y="165" textAnchor="middle" className="text-sm fill-sky-400">
                           Overall Health
                         </text>
                       </svg>
@@ -229,19 +229,19 @@ export default function CreditReportsPage() {
 
                   {/* Legend */}
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 mb-4">Factor Breakdown</h3>
+                    <h3 className="font-semibold text-sky-500 mb-4">Factor Breakdown</h3>
                     {creditFactors.map((factor, index) => (
                       <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: factor.color }}></div>
                           <div>
-                            <div className="font-medium text-gray-900">{factor.name}</div>
-                            <div className="text-sm text-gray-500">{factor.impact}</div>
+                            <div className="font-medium text-sky-500">{factor.name}</div>
+                            <div className="text-sm text-sky-300">{factor.impact}</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-semibold text-gray-900">{factor.percentage}%</div>
-                          <div className="text-sm text-gray-600">{factor.status}</div>
+                          <div className="font-semibold text-sky-500">{factor.percentage}%</div>
+                          <div className="text-sm text-sky-400">{factor.status}</div>
                         </div>
                       </div>
                     ))}
@@ -252,12 +252,12 @@ export default function CreditReportsPage() {
                 <div className="mt-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold text-sky-800">Overall Credit Health</h4>
-                      <p className="text-sm text-sky-600">Based on all factors combined</p>
+                      <h4 className="font-semibold text-sky-500">Overall Credit Health</h4>
+                      <p className="text-sm text-sky-400">Based on all factors combined</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-sky-800">{overallCreditHealth}%</div>
-                      <div className="text-sm text-sky-600">
+                      <div className="text-2xl font-bold text-sky-500">{overallCreditHealth}%</div>
+                      <div className="text-sm text-sky-400">
                         {overallCreditHealth >= 90
                           ? "Excellent"
                           : overallCreditHealth >= 80
@@ -287,37 +287,37 @@ export default function CreditReportsPage() {
                   <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
                     <CheckCircle className="h-6 w-6 text-green-500" />
                     <div className="flex-1">
-                      <div className="font-medium text-green-800">Payment Made</div>
+                      <div className="font-medium text-sky-500">Payment Made</div>
                       <div className="text-sm text-green-600">Credit card payment of $150 processed</div>
                     </div>
-                    <div className="text-sm text-gray-500">2 days ago</div>
+                    <div className="text-sm text-sky-300">2 days ago</div>
                   </div>
 
                   <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <TrendingUp className="h-6 w-6 text-blue-500" />
                     <div className="flex-1">
-                      <div className="font-medium text-blue-800">Credit Score Updated</div>
-                      <div className="text-sm text-blue-600">Score increased by 12 points to 675</div>
+                      <div className="font-medium text-sky-500">Credit Score Updated</div>
+                      <div className="text-sm text-sky-400">Score increased by 12 points to 675</div>
                     </div>
-                    <div className="text-sm text-gray-500">1 week ago</div>
+                    <div className="text-sm text-sky-300">1 week ago</div>
                   </div>
 
                   <div className="flex items-center gap-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                     <CreditCard className="h-6 w-6 text-yellow-500" />
                     <div className="flex-1">
-                      <div className="font-medium text-yellow-800">Credit Utilization Improved</div>
+                      <div className="font-medium text-sky-500">Credit Utilization Improved</div>
                       <div className="text-sm text-yellow-600">Utilization decreased to 15%</div>
                     </div>
-                    <div className="text-sm text-gray-500">2 weeks ago</div>
+                    <div className="text-sm text-sky-300">2 weeks ago</div>
                   </div>
 
                   <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
                     <CheckCircle className="h-6 w-6 text-green-500" />
                     <div className="flex-1">
-                      <div className="font-medium text-green-800">Account Opened</div>
+                      <div className="font-medium text-sky-500">Account Opened</div>
                       <div className="text-sm text-green-600">New credit building account activated</div>
                     </div>
-                    <div className="text-sm text-gray-500">1 month ago</div>
+                    <div className="text-sm text-sky-300">1 month ago</div>
                   </div>
                 </div>
               </CardContent>
@@ -333,19 +333,19 @@ export default function CreditReportsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Current Score</span>
+                  <span className="text-sky-400">Current Score</span>
                   <span className="font-semibold text-2xl">675</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Monthly Change</span>
+                  <span className="text-sky-400">Monthly Change</span>
                   <span className="font-semibold text-green-600">+12</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Credit Age</span>
+                  <span className="text-sky-400">Credit Age</span>
                   <span className="font-semibold">6 months</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Utilization</span>
+                  <span className="text-sky-400">Utilization</span>
                   <span className="font-semibold">15%</span>
                 </div>
               </CardContent>
@@ -363,7 +363,7 @@ export default function CreditReportsPage() {
                 <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2 mb-1">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="font-medium text-green-800">All Good!</span>
+                    <span className="font-medium text-sky-500">All Good!</span>
                   </div>
                   <p className="text-sm text-green-600">No negative items detected on your credit report.</p>
                 </div>
@@ -371,9 +371,9 @@ export default function CreditReportsPage() {
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 mb-1">
                     <TrendingUp className="h-4 w-4 text-blue-500" />
-                    <span className="font-medium text-blue-800">Improvement Opportunity</span>
+                    <span className="font-medium text-sky-500">Improvement Opportunity</span>
                   </div>
-                  <p className="text-sm text-blue-600">
+                  <p className="text-sm text-sky-400">
                     Consider keeping credit utilization below 10% for optimal scores.
                   </p>
                 </div>
@@ -398,10 +398,6 @@ export default function CreditReportsPage() {
                   <FileText className="h-4 w-4 mr-2" />
                   TransUnion Report
                 </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <Eye className="h-4 w-4 mr-2" />
-                  Credit Monitoring
-                </Button>
               </CardContent>
             </Card>
 
@@ -412,18 +408,18 @@ export default function CreditReportsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="p-3 bg-sky-50 rounded-lg">
-                  <h4 className="font-medium text-sky-800 mb-1">Pay on Time</h4>
-                  <p className="text-sm text-sky-600">
+                  <h4 className="font-medium text-sky-500 mb-1">Pay on Time</h4>
+                  <p className="text-sm text-sky-400">
                     Payment history is the most important factor in your credit score.
                   </p>
                 </div>
                 <div className="p-3 bg-sky-50 rounded-lg">
-                  <h4 className="font-medium text-sky-800 mb-1">Keep Balances Low</h4>
-                  <p className="text-sm text-sky-600">Aim to use less than 30% of your available credit limit.</p>
+                  <h4 className="font-medium text-sky-500 mb-1">Keep Balances Low</h4>
+                  <p className="text-sm text-sky-400">Aim to use less than 30% of your available credit limit.</p>
                 </div>
                 <div className="p-3 bg-sky-50 rounded-lg">
-                  <h4 className="font-medium text-sky-800 mb-1">Monitor Regularly</h4>
-                  <p className="text-sm text-sky-600">
+                  <h4 className="font-medium text-sky-500 mb-1">Monitor Regularly</h4>
+                  <p className="text-sm text-sky-400">
                     Check your credit report monthly for errors or suspicious activity.
                   </p>
                 </div>

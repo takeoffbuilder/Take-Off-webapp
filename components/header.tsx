@@ -63,7 +63,14 @@ export default function Header({ showAuth = true }: HeaderProps) {
     <>
       <header className="fixed top-0 left-0 right-0 flex items-center justify-between p-4 md:p-6 bg-black z-50">
         <div className="flex items-center">
-          <Link href={isAuthenticated && hasSelectedPlan ? "/dashboard" : "/"} onClick={closeMenu}>
+          <Link
+            href={
+              isAuthenticated && hasSelectedPlan && isBrowser && localStorage.getItem("takeoff_payment_completed")
+                ? "/dashboard"
+                : "/"
+            }
+            onClick={closeMenu}
+          >
             <img src="/takeoff-logo.jpeg" alt="Take Off" className="h-8 md:h-10" />
           </Link>
         </div>
@@ -73,19 +80,19 @@ export default function Header({ showAuth = true }: HeaderProps) {
               <Link href="/signin" onClick={closeMenu}>
                 <Button
                   variant="outline"
-                  className="bg-transparent border border-sky-500 text-white hover:bg-sky-500/10"
+                  className="bg-transparent border border-sky-500 text-white hover:bg-sky-500/20 transition-colors"
                 >
                   Sign In
                 </Button>
               </Link>
               <Link href="/signup" onClick={closeMenu}>
-                <Button className="bg-sky-400 hover:bg-sky-500 text-white">Sign Up</Button>
+                <Button className="bg-sky-400 hover:bg-sky-500 text-white transition-colors">Sign Up</Button>
               </Link>
             </div>
           )}
-          {isAuthenticated && hasSelectedPlan && (
+          {isAuthenticated && hasSelectedPlan && isBrowser && localStorage.getItem("takeoff_payment_completed") && (
             <Link href="/dashboard" onClick={closeMenu}>
-              <Button variant="ghost" className="text-white hover:bg-gray-800">
+              <Button variant="ghost" className="text-white hover:bg-gray-800 transition-colors">
                 Dashboard
               </Button>
             </Link>
@@ -93,7 +100,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-gray-800 relative z-50"
+            className="text-white hover:bg-gray-800 transition-colors relative z-50"
             onClick={toggleMenu}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -189,7 +196,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
                         Start building your credit today with no credit checks required.
                       </p>
                       <Link href="/signin" onClick={closeMenu}>
-                        <Button className="bg-sky-500 hover:bg-sky-600 text-white px-8 py-3 rounded-full">
+                        <Button className="bg-sky-500 hover:bg-sky-600 text-white px-8 py-3 rounded-full transition-colors">
                           Get Started Now
                         </Button>
                       </Link>

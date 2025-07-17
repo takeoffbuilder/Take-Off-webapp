@@ -150,7 +150,7 @@ export default function SupportPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading support center...</p>
+          <p className="text-sky-500">Loading support center...</p>
         </div>
       </div>
     )
@@ -165,8 +165,8 @@ export default function SupportPage() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Support Center</h1>
-              <p className="text-gray-600">Get help with your account and credit building journey</p>
+              <h1 className="text-3xl font-bold text-sky-500 mb-2">Support Center</h1>
+              <p className="text-sky-500">Get help with your account and credit building journey</p>
             </div>
           </div>
         </div>
@@ -181,8 +181,8 @@ export default function SupportPage() {
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MessageCircle className="h-6 w-6 text-green-500" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Live Chat</h3>
-                  <p className="text-sm text-gray-600 mb-4">Get instant help from our support team</p>
+                  <h3 className="font-semibold text-white mb-2">Live Chat</h3>
+                  <p className="text-sm text-sky-500 mb-4">Get instant help from our support team</p>
                   <Badge variant="outline" className="text-green-600 border-green-200">
                     Available Now
                   </Badge>
@@ -194,8 +194,8 @@ export default function SupportPage() {
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Mail className="h-6 w-6 text-blue-500" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
-                  <p className="text-sm text-gray-600 mb-4">Send us a detailed message</p>
+                  <h3 className="font-semibold text-white mb-2">Email Support</h3>
+                  <p className="text-sm text-sky-500 mb-4">Send us a detailed message</p>
                   <Badge variant="outline" className="text-blue-600 border-blue-200">
                     24h Response
                   </Badge>
@@ -207,8 +207,8 @@ export default function SupportPage() {
                   <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Phone className="h-6 w-6 text-purple-500" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Phone Support</h3>
-                  <p className="text-sm text-gray-600 mb-4">Speak directly with our team</p>
+                  <h3 className="font-semibold text-white mb-2">Phone Support</h3>
+                  <p className="text-sm text-sky-500 mb-4">Speak directly with our team</p>
                   <Badge variant="outline" className="text-purple-600 border-purple-200">
                     Mon-Fri 9-6 EST
                   </Badge>
@@ -220,7 +220,7 @@ export default function SupportPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Frequently Asked Questions</CardTitle>
-                <p className="text-sm text-gray-600">Find quick answers to common questions</p>
+                <p className="text-sm text-sky-500">Find quick answers to common questions</p>
               </CardHeader>
               <CardContent>
                 {/* Search and Filter */}
@@ -240,7 +240,7 @@ export default function SupportPage() {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-black"
                     >
                       {categories.map((category) => (
                         <option key={category.value} value={category.value}>
@@ -259,7 +259,7 @@ export default function SupportPage() {
                         onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
                         className="w-full px-4 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                       >
-                        <span className="font-medium text-gray-900">{faq.question}</span>
+                        <span className="font-medium text-white">{faq.question}</span>
                         {expandedFAQ === faq.id ? (
                           <ChevronDown className="h-5 w-5 text-gray-500" />
                         ) : (
@@ -267,7 +267,7 @@ export default function SupportPage() {
                         )}
                       </button>
                       {expandedFAQ === faq.id && (
-                        <div className="px-4 pb-4 text-gray-600 border-t border-gray-100">
+                        <div className="px-4 pb-4 text-white border-t border-gray-100">
                           <p className="pt-4">{faq.answer}</p>
                         </div>
                       )}
@@ -279,8 +279,8 @@ export default function SupportPage() {
                       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Search className="h-8 w-8 text-gray-400" />
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No FAQs found</h3>
-                      <p className="text-gray-600">Try adjusting your search or contact us directly.</p>
+                      <h3 className="text-lg font-semibold text-sky-500 mb-2">No FAQs found</h3>
+                      <p className="text-sky-500">Try adjusting your search or contact us directly.</p>
                     </div>
                   )}
                 </div>
@@ -291,12 +291,12 @@ export default function SupportPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Send us a Message</CardTitle>
-                <p className="text-sm text-gray-600">Can't find what you're looking for? We're here to help!</p>
+                <p className="text-sm text-sky-500">Can't find what you're looking for? We're here to help!</p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="subject" className="block text-sm font-medium text-sky-500 mb-1">
                       Subject
                     </label>
                     <Input
@@ -309,7 +309,7 @@ export default function SupportPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="priority" className="block text-sm font-medium text-sky-500 mb-1">
                       Priority
                     </label>
                     <select
@@ -326,7 +326,7 @@ export default function SupportPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="message" className="block text-sm font-medium text-sky-500 mb-1">
                       Message
                     </label>
                     <Textarea
@@ -339,7 +339,7 @@ export default function SupportPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="bg-sky-500 hover:bg-sky-600">
+                  <Button type="submit" className="bg-sky-500 hover:bg-sky-600 transition-colors">
                     <Send className="h-4 w-4 mr-2" />
                     Send Message
                   </Button>
@@ -359,21 +359,21 @@ export default function SupportPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Avg Response Time</span>
+                    <span className="text-sm text-sky-500">Avg Response Time</span>
                   </div>
                   <span className="font-semibold">2.5 hours</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Satisfaction Rate</span>
+                    <span className="text-sm text-sky-500">Satisfaction Rate</span>
                   </div>
                   <span className="font-semibold">98.5%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Issues Resolved</span>
+                    <span className="text-sm text-sky-500">Issues Resolved</span>
                   </div>
                   <span className="font-semibold">99.2%</span>
                 </div>
@@ -386,20 +386,32 @@ export default function SupportPage() {
                 <CardTitle>Quick Links</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                >
                   <FileText className="h-4 w-4 mr-2" />
                   User Guide
                 </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                >
                   <Video className="h-4 w-4 mr-2" />
                   Video Tutorials
                 </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                >
                   <HelpCircle className="h-4 w-4 mr-2" />
                   Getting Started
                 </Button>
                 <Link href="/credit-reports">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     <FileText className="h-4 w-4 mr-2" />
                     Credit Reports
                   </Button>
@@ -415,16 +427,16 @@ export default function SupportPage() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="font-medium text-gray-900">Email</div>
-                  <div className="text-sm text-gray-600">support@takeoffcredit.com</div>
+                  <div className="text-sm text-sky-500">support@takeoffcredit.com</div>
                 </div>
                 <div>
                   <div className="font-medium text-gray-900">Phone</div>
-                  <div className="text-sm text-gray-600">1-800-TAKEOFF</div>
+                  <div className="text-sm text-sky-500">1-800-TAKEOFF</div>
                 </div>
                 <div>
                   <div className="font-medium text-gray-900">Hours</div>
-                  <div className="text-sm text-gray-600">Monday - Friday: 9 AM - 6 PM EST</div>
-                  <div className="text-sm text-gray-600">Saturday: 10 AM - 4 PM EST</div>
+                  <div className="text-sm text-sky-500">Monday - Friday: 9 AM - 6 PM EST</div>
+                  <div className="text-sm text-sky-500">Saturday: 10 AM - 4 PM EST</div>
                 </div>
               </CardContent>
             </Card>

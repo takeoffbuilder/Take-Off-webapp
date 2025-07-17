@@ -174,7 +174,7 @@ export default function TransactionsPage() {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "starter_boost":
-        return <Zap className="h-5 w-5 text-blue-500" />
+        return <Zap className="h-5 w-5 text-sky-500" />
       case "power_boost":
         return <TrendingUp className="h-5 w-5 text-orange-500" />
       case "max_boost":
@@ -187,7 +187,7 @@ export default function TransactionsPage() {
   const getPlanBadgeColor = (category: string) => {
     switch (category) {
       case "starter_boost":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-blue-100 text-sky-500 border-blue-200"
       case "power_boost":
         return "bg-orange-100 text-orange-800 border-orange-200"
       case "max_boost":
@@ -232,7 +232,7 @@ export default function TransactionsPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading boost plan transactions...</p>
+          <p className="text-white">Loading boost plan transactions...</p>
         </div>
       </div>
     )
@@ -248,10 +248,10 @@ export default function TransactionsPage() {
           <div className="flex items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Boost Plan Transactions</h1>
-              <p className="text-gray-600">View your boost plan purchase history and payments</p>
+              <p className="text-gray-700">View your boost plan purchase history and payments</p>
             </div>
           </div>
-          <Button className="bg-sky-500 hover:bg-sky-600">
+          <Button className="bg-sky-500 hover:bg-sky-600 transition-colors">
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
@@ -263,11 +263,11 @@ export default function TransactionsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Spent on Boosts</p>
-                  <p className="text-2xl font-bold text-gray-900">${totalSpent.toFixed(2)}</p>
+                  <p className="text-sm text-white">Total Spent on Boosts</p>
+                  <p className="text-2xl font-bold text-sky-500">${totalSpent.toFixed(2)}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-blue-500" />
+                  <Zap className="h-6 w-6 text-sky-500" />
                 </div>
               </div>
             </CardContent>
@@ -277,8 +277,8 @@ export default function TransactionsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Completed Payments</p>
-                  <p className="text-2xl font-bold text-gray-900">{completedTransactions}</p>
+                  <p className="text-sm text-white">Completed Payments</p>
+                  <p className="text-2xl font-bold text-sky-500">{completedTransactions}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                   <ArrowDownRight className="h-6 w-6 text-green-500" />
@@ -291,8 +291,8 @@ export default function TransactionsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Pending Payments</p>
-                  <p className="text-2xl font-bold text-gray-900">{pendingTransactions}</p>
+                  <p className="text-sm text-white">Pending Payments</p>
+                  <p className="text-2xl font-bold text-sky-500">{pendingTransactions}</p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                   <CreditCard className="h-6 w-6 text-yellow-500" />
@@ -321,10 +321,10 @@ export default function TransactionsPage() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-black"
                 >
                   {categories.map((category) => (
-                    <option key={category.value} value={category.value}>
+                    <option key={category.value} value={category.value} className="text-black">
                       {category.label}
                     </option>
                   ))}
@@ -337,8 +337,8 @@ export default function TransactionsPage() {
         {/* Transactions List */}
         <Card>
           <CardHeader>
-            <CardTitle>Boost Plan Purchase History</CardTitle>
-            <p className="text-sm text-gray-600">
+            <CardTitle className="text-white">Boost Plan Purchase History</CardTitle>
+            <p className="text-sm text-white">
               Showing {filteredTransactions.length} of {transactions.length} boost plan transactions
             </p>
           </CardHeader>
@@ -386,7 +386,7 @@ export default function TransactionsPage() {
                       </div>
                     </div>
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <ArrowUpRight className="h-4 w-4 text-blue-500" />
+                      <ArrowUpRight className="h-4 w-4 text-sky-500" />
                     </div>
                   </div>
                 </div>
@@ -400,7 +400,7 @@ export default function TransactionsPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No boost plan transactions found</h3>
                   <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
                   <Link href="/add-boost">
-                    <Button className="mt-4 bg-sky-500 hover:bg-sky-600">
+                    <Button className="mt-4 bg-sky-500 hover:bg-sky-600 transition-colors">
                       <Zap className="h-4 w-4 mr-2" />
                       Purchase Boost Plan
                     </Button>

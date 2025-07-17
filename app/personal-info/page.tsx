@@ -314,7 +314,9 @@ export default function PersonalInfoPage() {
                   <>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="firstName">First Name *</Label>
+                        <Label htmlFor="firstName" className="text-gray-900">
+                          First Name *
+                        </Label>
                         <Input
                           id="firstName"
                           value={personalInfo.firstName}
@@ -324,7 +326,9 @@ export default function PersonalInfoPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Label htmlFor="lastName" className="text-gray-900">
+                          Last Name *
+                        </Label>
                         <Input
                           id="lastName"
                           value={personalInfo.lastName}
@@ -336,7 +340,9 @@ export default function PersonalInfoPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="ssn">Social Security Number *</Label>
+                      <Label htmlFor="ssn" className="text-gray-900">
+                        Social Security Number *
+                      </Label>
                       <Input
                         id="ssn"
                         value={personalInfo.ssn}
@@ -350,7 +356,7 @@ export default function PersonalInfoPage() {
 
                     {/* Date of Birth Wheels */}
                     <div>
-                      <Label>Date of Birth *</Label>
+                      <Label className="text-gray-900">Date of Birth *</Label>
                       <div className="grid grid-cols-3 gap-4 mt-2">
                         {/* Month Wheel */}
                         <div>
@@ -445,7 +451,9 @@ export default function PersonalInfoPage() {
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="phoneNumber">Phone Number *</Label>
+                        <Label htmlFor="phoneNumber" className="text-gray-900">
+                          Phone Number *
+                        </Label>
                         <Input
                           id="phoneNumber"
                           value={personalInfo.phoneNumber}
@@ -458,7 +466,9 @@ export default function PersonalInfoPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="street">Street Address *</Label>
+                      <Label htmlFor="street" className="text-gray-900">
+                        Street Address *
+                      </Label>
                       <Input
                         id="street"
                         value={personalInfo.address.street}
@@ -470,7 +480,9 @@ export default function PersonalInfoPage() {
 
                     <div className="grid md:grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="city">City *</Label>
+                        <Label htmlFor="city" className="text-gray-900">
+                          City *
+                        </Label>
                         <Input
                           id="city"
                           value={personalInfo.address.city}
@@ -480,7 +492,9 @@ export default function PersonalInfoPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="state">State *</Label>
+                        <Label htmlFor="state" className="text-gray-900">
+                          State *
+                        </Label>
                         <Select
                           value={personalInfo.address.state}
                           onValueChange={(value) => handleInputChange("state", value, "address")}
@@ -498,7 +512,9 @@ export default function PersonalInfoPage() {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="zipCode">ZIP Code *</Label>
+                        <Label htmlFor="zipCode" className="text-gray-900">
+                          ZIP Code *
+                        </Label>
                         <Input
                           id="zipCode"
                           value={personalInfo.address.zipCode}
@@ -525,7 +541,7 @@ export default function PersonalInfoPage() {
                   <Button
                     onClick={handleSubmit}
                     disabled={isLoading || !validateStep(currentStep)}
-                    className="bg-sky-500 hover:bg-sky-600"
+                    className="bg-sky-500 hover:bg-sky-600 transition-colors disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Complete Application"}
                   </Button>

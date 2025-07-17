@@ -114,10 +114,10 @@ export default function AffiliateJoinPage() {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Input value={affiliateLink} readOnly className="font-mono text-sm bg-white" />
+                    <Input value={affiliateLink} readOnly className="font-mono text-sm bg-white text-gray-900" />
                     <Button
                       onClick={handleCopyLink}
-                      className={`px-4 ${copied ? "bg-green-500 hover:bg-green-600" : "bg-sky-500 hover:bg-sky-600"}`}
+                      className={`px-4 transition-colors ${copied ? "bg-green-500 hover:bg-green-600" : "bg-sky-500 hover:bg-sky-600"}`}
                     >
                       {copied ? (
                         <>
@@ -144,7 +144,7 @@ export default function AffiliateJoinPage() {
                         href={option.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`${option.color} text-white p-3 rounded-lg flex flex-col items-center gap-2 transition-colors`}
+                        className={`${option.color} text-white p-3 rounded-lg flex flex-col items-center gap-2 transition-all hover:scale-105`}
                       >
                         <option.icon className="h-5 w-5" />
                         <span className="text-xs font-medium">{option.name}</span>
@@ -174,7 +174,11 @@ export default function AffiliateJoinPage() {
                         variant={selectedPeriod === period.key ? "default" : "outline"}
                         size="sm"
                         onClick={() => setSelectedPeriod(period.key)}
-                        className={selectedPeriod === period.key ? "bg-sky-500 hover:bg-sky-600" : ""}
+                        className={
+                          selectedPeriod === period.key
+                            ? "bg-sky-500 hover:bg-sky-600 transition-colors"
+                            : "hover:bg-gray-50 transition-colors"
+                        }
                       >
                         {period.label}
                       </Button>
@@ -304,12 +308,18 @@ export default function AffiliateJoinPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Link href="/support">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     Contact Support
                   </Button>
                 </Link>
                 <Link href="/affiliate">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                  >
                     Back to Affiliate Info
                   </Button>
                 </Link>

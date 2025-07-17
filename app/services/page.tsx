@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
 import { useRouter } from "next/navigation"
-import { Check, Star, CreditCard, DollarSign, Shield, TrendingUp, ArrowRight } from "lucide-react"
+import { Check, CreditCard, DollarSign, Shield, TrendingUp, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 interface UserData {
@@ -49,12 +48,12 @@ export default function ServicesPage() {
       features: [
         "$1,500 credit line",
         "Monthly credit reporting",
+        "1 Bureau Credit Report Access",
         "Basic credit monitoring",
         "Mobile app access",
         "Email support",
         "Automatic payments",
       ],
-      popular: false,
       buttonText: "Choose Starter",
       gradient: "from-blue-500 to-blue-600",
     },
@@ -67,13 +66,13 @@ export default function ServicesPage() {
       features: [
         "$2,500 credit line",
         "Tri-bureau credit reporting",
+        "2 Bureau Credit Report Access",
         "Advanced credit monitoring",
         "Credit score alerts",
         "Priority support",
         "Financial education resources",
         "Rent payment reporting",
       ],
-      popular: true,
       buttonText: "Choose Power",
       gradient: "from-sky-500 to-sky-600",
     },
@@ -86,6 +85,7 @@ export default function ServicesPage() {
       features: [
         "$3,500 credit line",
         "Tri-bureau reporting",
+        "3 Bureau Credit Report Access",
         "Real-time credit monitoring",
         "Credit coaching sessions",
         "Dedicated support",
@@ -93,7 +93,6 @@ export default function ServicesPage() {
         "Credit dispute assistance",
         "Utility bill reporting",
       ],
-      popular: false,
       buttonText: "Choose Max",
       gradient: "from-purple-500 to-purple-600",
     },
@@ -110,11 +109,11 @@ export default function ServicesPage() {
         "$1,500 secured loan",
         "12-24 month terms",
         "Monthly credit reporting",
+        "1 Bureau Credit Report Access",
         "Fixed interest rate",
         "Automatic payments",
         "Email support",
       ],
-      popular: false,
       buttonText: "Choose Starter",
       gradient: "from-green-500 to-green-600",
     },
@@ -128,12 +127,12 @@ export default function ServicesPage() {
         "$2,500 secured loan",
         "12-36 month terms",
         "Tri-bureau credit reporting",
+        "2 Bureau Credit Report Access",
         "Competitive interest rate",
         "Flexible payment options",
         "Priority support",
         "Credit education resources",
       ],
-      popular: true,
       buttonText: "Choose Power",
       gradient: "from-emerald-500 to-emerald-600",
     },
@@ -147,13 +146,13 @@ export default function ServicesPage() {
         "$3,500 secured loan",
         "12-48 month terms",
         "Tri-bureau reporting",
+        "3 Bureau Credit Report Access",
         "Best interest rates",
         "Custom payment plans",
         "Dedicated support",
         "Credit coaching included",
         "Early payoff options",
       ],
-      popular: false,
       buttonText: "Choose Max",
       gradient: "from-teal-500 to-teal-600",
     },
@@ -229,7 +228,7 @@ export default function ServicesPage() {
                 className={`px-8 py-3 rounded-full font-medium transition-all ${
                   selectedCategory === "credit-line"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-400 hover:text-white"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800"
                 }`}
               >
                 <CreditCard className="h-5 w-5 inline mr-2" />
@@ -240,7 +239,7 @@ export default function ServicesPage() {
                 className={`px-8 py-3 rounded-full font-medium transition-all ${
                   selectedCategory === "secured-loan"
                     ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-400 hover:text-white"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800"
                 }`}
               >
                 <Shield className="h-5 w-5 inline mr-2" />
@@ -255,19 +254,8 @@ export default function ServicesPage() {
           {currentOptions.map((plan, index) => (
             <Card
               key={index}
-              className={`relative overflow-hidden bg-gray-900 border-gray-700 ${
-                plan.popular ? "ring-2 ring-sky-500 shadow-xl scale-105" : "shadow-lg"
-              } hover:shadow-xl transition-all duration-300`}
+              className="relative overflow-hidden bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-sky-500 text-white px-4 py-1 rounded-full font-medium flex items-center gap-1">
-                    <Star className="h-4 w-4" />
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
-
               <div className={`h-2 bg-gradient-to-r ${plan.gradient}`}></div>
 
               <CardHeader className="text-center pb-4">
@@ -300,7 +288,7 @@ export default function ServicesPage() {
                 <Button
                   onClick={() => handleSelectPlan(plan.name, selectedCategory)}
                   disabled={isLoading}
-                  className={`w-full bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50`}
+                  className={`w-full bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50 transform hover:scale-105`}
                 >
                   {isLoading ? "Processing..." : plan.buttonText}
                   {!isLoading && <ArrowRight className="h-4 w-4" />}
@@ -341,7 +329,7 @@ export default function ServicesPage() {
 
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-orange-400" />
+                <TrendingUp className="h-8 w-8 text-orange-400" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-white">Expert Support</h3>
               <p className="text-gray-400">Dedicated credit building specialists</p>
@@ -407,7 +395,7 @@ export default function ServicesPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="px-8 bg-transparent border-white text-white hover:bg-white hover:text-sky-600"
+                className="px-8 bg-transparent border-white text-white hover:bg-white hover:text-sky-600 transition-colors"
               >
                 Get Help
               </Button>
