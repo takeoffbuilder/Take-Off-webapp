@@ -8,7 +8,8 @@ export default function VerifyEmailPage() {
           Verify Your Email
         </h1>
         <p className="text-gray-700">
-          Please check your inbox for a verification link.
+          Please check your inbox for a verification link. <br />
+          Once you verify your email, log in to get started.
         </p>
       </div>
     </div>
