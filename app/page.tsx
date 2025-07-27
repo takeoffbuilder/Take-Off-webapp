@@ -170,12 +170,12 @@ export default function HomePage() {
               {/* New Slogan */}
               <p className="text-xl lg:text-2xl font-semibold text-sky-400 mb-8">Add Multiple Credit Builder Lines</p>
 
-              {/* Add the moon logo image */}
+              {/* Add the new astronaut rocket image */}
               <div className="flex justify-center lg:justify-start mb-8">
                 <img
-                  src="/moon-logo.png"
-                  alt="Astronaut on moon with coffee cup"
-                  className="w-[300px] h-[300px] object-contain"
+                  src="/astronaut-rocket-new.png"
+                  alt="Astronaut riding rocket to the moon"
+                  className="w-[350px] h-[350px] object-contain"
                 />
               </div>
 

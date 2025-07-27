@@ -19,6 +19,7 @@ interface PersonalInfo {
   phoneNumber: string
   address: {
     street: string
+    aptUnit: string
     city: string
     state: string
     zipCode: string
@@ -50,6 +51,7 @@ export default function PersonalInfoPage() {
     phoneNumber: "",
     address: {
       street: "",
+      aptUnit: "",
       city: "",
       state: "",
       zipCode: "",
@@ -475,6 +477,18 @@ export default function PersonalInfoPage() {
                         onChange={(e) => handleInputChange("street", e.target.value, "address")}
                         placeholder="Enter your street address"
                         required
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="aptUnit" className="text-gray-900">
+                        Apt/Unit# (Optional)
+                      </Label>
+                      <Input
+                        id="aptUnit"
+                        value={personalInfo.address.aptUnit}
+                        onChange={(e) => handleInputChange("aptUnit", e.target.value, "address")}
+                        placeholder="Apartment, suite, unit, building, floor, etc."
                       />
                     </div>
 

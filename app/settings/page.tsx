@@ -34,6 +34,7 @@ interface UserData {
   email: string
   phone: string
   streetAddress?: string
+  aptUnit?: string
   city?: string
   state?: string
   zipCode?: string
@@ -136,6 +137,7 @@ export default function SettingsPage() {
         const mergedUserData = {
           ...user,
           streetAddress: personalInfo.address?.street || user.streetAddress || "",
+          aptUnit: personalInfo.address?.aptUnit || user.aptUnit || "",
           city: personalInfo.address?.city || user.city || "",
           state: personalInfo.address?.state || user.state || "",
           zipCode: personalInfo.address?.zipCode || user.zipCode || "",
@@ -244,6 +246,7 @@ export default function SettingsPage() {
           address: {
             ...personalInfo.address,
             street: editedData.streetAddress || "",
+            aptUnit: editedData.aptUnit || "",
             city: editedData.city || "",
             state: editedData.state || "",
             zipCode: editedData.zipCode || "",
@@ -709,6 +712,19 @@ export default function SettingsPage() {
                   value={isEditing ? editedData?.streetAddress || "" : userData?.streetAddress || ""}
                   onChange={(e) => setEditedData((prev) => (prev ? { ...prev, streetAddress: e.target.value } : null))}
                   placeholder="123 Main Street"
+                  disabled={!isEditing}
+                  className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="aptUnit">Apt/Unit#</Label>
+                <Input
+                  id="aptUnit"
+                  type="text"
+                  value={isEditing ? editedData?.aptUnit || "" : userData?.aptUnit || ""}
+                  onChange={(e) => setEditedData((prev) => (prev ? { ...prev, aptUnit: e.target.value } : null))}
+                  placeholder="Apartment, suite, unit, building, floor, etc."
                   disabled={!isEditing}
                   className={!isEditing ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200" : ""}
                 />
