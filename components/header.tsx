@@ -74,29 +74,37 @@ export default function Header({ showAuth = true }: HeaderProps) {
             <img src="/takeoff-logo.jpeg" alt="Take Off" className="h-8 md:h-10" />
           </Link>
         </div>
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Always show Sign In/Sign Up buttons when not authenticated */}
           {showAuth && !isAuthenticated && (
-            <div className="flex items-center gap-2">
+            <>
               <Link href="/signin" onClick={closeMenu}>
                 <Button
                   variant="outline"
-                  className="bg-transparent border border-sky-500 text-white hover:bg-sky-500/20 transition-colors"
+                  className="bg-transparent border border-sky-500 text-white hover:bg-sky-500/20 transition-colors text-sm md:text-base px-3 md:px-4 py-2"
                 >
                   Sign In
                 </Button>
               </Link>
               <Link href="/signup" onClick={closeMenu}>
-                <Button className="bg-sky-400 hover:bg-sky-500 text-white transition-colors">Sign Up</Button>
+                <Button className="bg-sky-400 hover:bg-sky-500 text-white transition-colors text-sm md:text-base px-3 md:px-4 py-2">
+                  Sign Up
+                </Button>
               </Link>
-            </div>
+            </>
           )}
+
+          {/* Dashboard button for authenticated users with completed payment */}
           {isAuthenticated && hasSelectedPlan && isBrowser && localStorage.getItem("takeoff_payment_completed") && (
             <Link href="/dashboard" onClick={closeMenu}>
-              <Button variant="ghost" className="text-white hover:bg-gray-800 transition-colors">
+              <Button variant="ghost" className="text-white hover:bg-gray-800 transition-colors hidden sm:flex">
                 Dashboard
               </Button>
             </Link>
           )}
+
+          {/* Hamburger menu button */}
           <Button
             variant="ghost"
             size="icon"
