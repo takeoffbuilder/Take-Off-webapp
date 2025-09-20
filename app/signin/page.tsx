@@ -3,21 +3,43 @@
 import type React from "react"
 
 import { useState } from "react"
+import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Header from "@/components/header"
-import { useRouter } from "next/navigation"
-import { Mail } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 export default function SignInPage() {
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [step, setStep] = useState<"email" | "verification">("email")
   const [email, setEmail] = useState("")
   const [verificationCode, setVerificationCode] = useState("")
-  const [sentCode, setSentCode] = useState("")
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Get plan details from URL params if coming from services page
+  const planFromUrl = searchParams.get("plan")
+  const planType = searchParams.get("type")
+  const planPrice = searchParams.get("price")
+  const planLimit = searchParams.get("limit")
+
+  const handleBack = () => {
+    if (step === "verification") {
+      setStep("email")
+      setError("")
+    } else {
+      if (window.history.length > 1) {
+        router.back()
+      } else {
+        router.push("/")
+      }
+    }
+  }
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,16 +47,17 @@ export default function SignInPage() {
     setError("")
 
     try {
-      // Simulate API call to send verification code
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Simulate API call for sending verification code
+      await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      // Generate 6-digit code
-      const code = Math.floor(100000 + Math.random() * 900000).toString()
-      setSentCode(code)
+      // Analytics event
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "signin_email_submitted", {
+          event_category: "authentication",
+          event_label: "email_verification_sent",
+        })
+      }
 
-      console.log(`Verification code sent to ${email}: ${code}`)
-
-      // Move to verification step
       setStep("verification")
     } catch (err) {
       setError("Failed to send verification code. Please try again.")
@@ -49,320 +72,126 @@ export default function SignInPage() {
     setError("")
 
     try {
-      // Simulate verification delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Simulate API call for verification
+      await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      if (verificationCode !== sentCode) {
-        setError("Invalid verification code. Please try again.")
-        setIsLoading(false)
-        return
+      // Store auth data
+      localStorage.setItem("takeoff_auth", "true")
+      localStorage.setItem(
+        "takeoff_user",
+        JSON.stringify({
+          email: email,
+          firstName: "John",
+          lastName: "Doe",
+          isVerified: true,
+          signupDate: new Date().toISOString(),
+        }),
+      )
+
+      // Store plan details if coming from services page
+      if (planFromUrl && planType && planPrice && planLimit) {
+        localStorage.setItem(
+          "takeoff_selected_plan",
+          JSON.stringify({
+            plan: planFromUrl,
+            type: planType,
+            price: planPrice,
+            limit: planLimit,
+          }),
+        )
       }
 
-      // Check if user exists and has a plan
-      const existingUser = localStorage.getItem("takeoff_user")
-      const existingPlan = localStorage.getItem("takeoff_selected_plan")
+      // Analytics event
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "signin_completed", {
+          event_category: "authentication",
+          event_label: "user_authenticated",
+        })
+      }
 
-      // Check if user came from plan selection (URL params should still be available)
-      const urlParams = new URLSearchParams(window.location.search)
-      const planFromUrl = urlParams.get("plan")
-      const typeFromUrl = urlParams.get("type")
-      const priceFromUrl = urlParams.get("price")
-      const limitFromUrl = urlParams.get("limit")
-
-      if (existingUser) {
-        const userData = JSON.parse(existingUser)
-
-        // Check if this is the same email
-        if (userData.email === email) {
-          // Set auth status
-          localStorage.setItem(
-            "takeoff_auth",
-            JSON.stringify({
-              isSignedIn: true,
-              email: email,
-              signInTime: new Date().toISOString(),
-            }),
-          )
-
-          // If user has plan params from URL, go to personal info
-          if (planFromUrl && typeFromUrl && priceFromUrl) {
-            const params = new URLSearchParams({
-              plan: planFromUrl,
-              type: typeFromUrl,
-              price: priceFromUrl,
-              limit: limitFromUrl || "",
-            })
-            router.push(`/personal-info?${params.toString()}`)
-          }
-          // Otherwise route based on existing plan status
-          else if (existingPlan) {
-            router.push("/dashboard")
-          } else {
-            router.push("/services")
-          }
-        } else {
-          // Different email - treat as new user
-          createNewUser()
-        }
+      // Redirect based on whether user has selected a plan
+      if (planFromUrl) {
+        router.push("/personal-info")
       } else {
-        // No existing user - create new one
-        createNewUser()
+        router.push("/services")
       }
     } catch (err) {
-      setError("Verification failed. Please try again.")
+      setError("Invalid verification code. Please try again.")
     }
 
-    setIsLoading(false)
-  }
-
-  const createNewUser = () => {
-    // Create new user profile
-    localStorage.setItem(
-      "takeoff_user",
-      JSON.stringify({
-        firstName: "User", // We'll collect this later if needed
-        lastName: "",
-        email: email,
-        phone: "",
-        isVerified: true,
-        signupDate: new Date().toISOString(),
-      }),
-    )
-
-    // Set auth status
-    localStorage.setItem(
-      "takeoff_auth",
-      JSON.stringify({
-        isSignedIn: true,
-        email: email,
-        signInTime: new Date().toISOString(),
-      }),
-    )
-
-    // Check if user came from plan selection
-    const urlParams = new URLSearchParams(window.location.search)
-    const planFromUrl = urlParams.get("plan")
-    const typeFromUrl = urlParams.get("type")
-    const priceFromUrl = urlParams.get("price")
-    const limitFromUrl = urlParams.get("limit")
-
-    if (planFromUrl && typeFromUrl && priceFromUrl) {
-      // User came from plan selection - go directly to personal info
-      const params = new URLSearchParams({
-        plan: planFromUrl,
-        type: typeFromUrl,
-        price: priceFromUrl,
-        limit: limitFromUrl || "",
-      })
-      router.push(`/personal-info?${params.toString()}`)
-    } else {
-      // New users without plan selection go to services page
-      router.push("/services")
-    }
-  }
-
-  const resendCode = async () => {
-    setIsLoading(true)
-
-    // Generate new code
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString()
-    setSentCode(newCode)
-
-    // Simulate sending
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    console.log(`New verification code sent to ${email}: ${newCode}`)
-    setError("")
     setIsLoading(false)
   }
 
   const handleSocialSignIn = (provider: string) => {
     console.log(`Sign in with ${provider}`)
-
-    // For demo purposes, simulate successful social login
-    const demoEmail = `demo@${provider.toLowerCase()}.com`
-
-    localStorage.setItem(
-      "takeoff_auth",
-      JSON.stringify({
-        isSignedIn: true,
-        email: demoEmail,
-        signInTime: new Date().toISOString(),
-        provider: provider,
-      }),
-    )
-
-    localStorage.setItem(
-      "takeoff_user",
-      JSON.stringify({
-        firstName: "Demo",
-        lastName: "User",
-        email: demoEmail,
-        phone: "+1 (555) 123-4567",
-        isVerified: true,
-        signupDate: new Date().toISOString(),
-      }),
-    )
-
-    // Check if user has selected a plan
-    const selectedPlan = localStorage.getItem("takeoff_selected_plan")
-    if (selectedPlan) {
-      router.push("/dashboard")
-    } else {
-      router.push("/services")
-    }
-  }
-
-  if (step === "verification") {
-    return (
-      <div className="min-h-screen bg-black">
-        <Header showAuth={false} />
-
-        <main className="flex items-center justify-center py-12 px-4 pt-24">
-          <div className="w-full max-w-md">
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-8">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="h-8 w-8 text-sky-400" />
-                </div>
-                <h1 className="text-3xl font-bold text-white mb-2">Check Your Email</h1>
-                <p className="text-gray-400">
-                  We've sent a 6-digit verification code to
-                  <br />
-                  <span className="font-medium text-white">{email}</span>
-                </p>
-              </div>
-
-              {/* Demo Code Display */}
-              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-6">
-                <p className="text-sm text-yellow-300 mb-2">
-                  <strong>Demo Mode:</strong> Your verification code is:
-                </p>
-                <p className="text-2xl font-bold text-yellow-200 text-center">{sentCode}</p>
-              </div>
-
-              <form onSubmit={handleVerificationSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="code" className="text-white">
-                    Verification Code
-                  </Label>
-                  <Input
-                    id="code"
-                    type="text"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="Enter 6-digit code"
-                    className="text-center text-2xl tracking-widest bg-gray-800 border-gray-600 text-white placeholder-gray-500"
-                    maxLength={6}
-                    required
-                  />
-                </div>
-
-                {error && (
-                  <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
-                    <p className="text-sm text-red-300">{error}</p>
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full transition-colors disabled:opacity-50"
-                  disabled={isLoading || verificationCode.length !== 6}
-                >
-                  {isLoading ? "Verifying..." : "Verify & Continue"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center space-y-4">
-                <p className="text-gray-400 text-sm">
-                  Didn't receive the code?{" "}
-                  <button
-                    onClick={resendCode}
-                    disabled={isLoading}
-                    className="text-sky-400 hover:underline font-medium disabled:opacity-50 transition-colors"
-                  >
-                    {isLoading ? "Sending..." : "Resend Code"}
-                  </button>
-                </p>
-
-                <button
-                  onClick={() => setStep("email")}
-                  className="flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300 mx-auto transition-colors"
-                >
-                  ← Back to Email
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    )
+    setError("Social sign in coming soon!")
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <Header showAuth={false} />
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gray-900 border-gray-700">
+        <CardHeader className="space-y-1">
+          {/* Back Button */}
+          <div className="flex justify-start mb-4">
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="text-sm">Back</span>
+            </button>
+          </div>
 
-      <main className="flex items-center justify-center py-12 px-4 pt-24">
-        <div className="w-full max-w-md">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-8">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Welcome to Take Off</h1>
-              <p className="text-gray-400">Enter your email to sign in or create an account</p>
-            </div>
+          <CardTitle className="text-2xl font-bold text-center text-white">
+            {step === "email" ? "Welcome Back" : "Verify Your Email"}
+          </CardTitle>
+          <CardDescription className="text-center text-gray-400">
+            {step === "email" ? "Sign in to your Take Off account" : `We sent a verification code to ${email}`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="p-3 text-sm text-red-400 bg-red-900/20 border border-red-800 rounded-md">{error}</div>
+          )}
 
-            <form onSubmit={handleEmailSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="email" className="text-white">
-                  Email Address
-                </Label>
-                <div className="relative">
+          {step === "email" ? (
+            <>
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-white">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
+                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-gray-800 border-gray-600 text-white placeholder-gray-500"
-                    placeholder="Enter your email"
                     required
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   />
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 </div>
-              </div>
+                <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-600 text-white" disabled={isLoading}>
+                  {isLoading ? "Sending Code..." : "Continue"}
+                </Button>
+              </form>
 
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
-                  <p className="text-sm text-red-300">{error}</p>
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-full transition-colors disabled:opacity-50"
-                disabled={isLoading}
-              >
-                {isLoading ? "Sending Code..." : "Continue with Email"}
-              </Button>
-            </form>
-
-            <div className="mt-8">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-700" />
+                  <Separator className="w-full bg-gray-700" />
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-gray-900 text-gray-400">Or continue with</span>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <Button
                   variant="outline"
-                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700 transition-colors"
                   onClick={() => handleSocialSignIn("Google")}
-                  type="button"
+                  className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                 >
-                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -384,27 +213,60 @@ export default function SignInPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full bg-gray-800 border-gray-600 text-white hover:bg-gray-700 transition-colors"
-                  onClick={() => handleSocialSignIn("Facebook")}
-                  type="button"
+                  onClick={() => handleSocialSignIn("Apple")}
+                  className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                 >
-                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.017 0C8.396 0 8.025.044 6.79.207 5.56.37 4.703.644 3.967 1.007c-.74.364-1.379.85-2.009 1.48C1.329 3.117.843 3.756.48 4.496.116 5.231-.158 6.089-.32 7.318-.484 8.553-.528 8.924-.528 12.545s.044 3.992.207 5.227c.163 1.229.437 2.087.8 2.822.364.74.85 1.379 1.48 2.009.63.63 1.269 1.116 2.009 1.48.735.364 1.593.638 2.822.8 1.235.164 1.606.208 5.227.208s3.992-.044 5.227-.207c1.229-.163 2.087-.437 2.822-.8.74-.365 1.379-.85 2.009-1.48.63-.63 1.116-1.269 1.48-2.009.364-.735.638-1.593.8-2.822.164-1.235.208-1.606.208-5.227s-.044-3.992-.207-5.227c-.163-1.229-.437-2.087-.8-2.822-.365-.74-.85-1.379-1.48-2.009C20.883 1.329 20.244.843 19.504.48 18.769.116 17.911-.158 16.682-.32 15.447-.484 15.076-.528 11.455-.528s-3.992.044-5.227.207zm-.132 2.076c3.534 0 3.95.014 5.347.072 1.29.059 1.99.273 2.454.454.617.24 1.057.527 1.52.99.463.463.75.903.99 1.52.181.464.395 1.164.454 2.454.058 1.397.072 1.813.072 5.347s-.014 3.95-.072 5.347c-.059 1.29-.273 1.99-.454 2.454-.24.617-.527 1.057-.99 1.52-.463.463-.903.75-1.52.99-.464.181-1.164.395-2.454.454-1.397.058-1.813.072-5.347.072s-3.95-.014-5.347-.072c-1.29-.059-1.99-.273-2.454-.454-.617-.24-1.057-.527-1.52-.99-.463-.463-.75-.903-.99-1.52-.181-.464-.395-1.164-.454-2.454-.058-1.397-.072-1.813-.072-5.347s.014-3.95.072-5.347c.059-1.29.273-1.99.454-2.454.24-.617.527-1.057.99-1.52.463-.463.903-.75 1.52-.99.464-.181 1.164-.395 2.454-.454 1.397-.058 1.813-.072 5.347-.072z" />
                   </svg>
-                  Facebook
+                  Apple
                 </Button>
               </div>
-            </div>
 
-            {/* Demo Instructions */}
-            <div className="mt-8 bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-              <p className="text-sm text-blue-300">
-                <strong>Demo Mode:</strong> Enter any email address to receive a verification code!
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
+              <div className="text-center text-sm text-gray-400">
+                Don't have an account?{" "}
+                <Link href="/signup" className="text-sky-400 hover:text-sky-300 transition-colors">
+                  Sign up
+                </Link>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={handleVerificationSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="code" className="text-white">
+                  Verification Code
+                </Label>
+                <Input
+                  id="code"
+                  type="text"
+                  placeholder="Enter 6-digit code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  required
+                  maxLength={6}
+                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 text-center text-lg tracking-widest"
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-sky-500 hover:bg-sky-600 text-white"
+                disabled={isLoading || verificationCode.length !== 6}
+              >
+                {isLoading ? "Verifying..." : "Verify & Sign In"}
+              </Button>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setStep("email")}
+                  className="text-sm text-sky-400 hover:text-sky-300 transition-colors"
+                >
+                  Didn't receive a code? Try again
+                </button>
+              </div>
+            </form>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

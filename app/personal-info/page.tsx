@@ -2,80 +2,82 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Progress } from "@/components/ui/progress"
+import { ArrowLeft, User, Phone, Mail, Calendar, MapPin, AlertCircle } from "lucide-react"
+import Link from "next/link"
 
 interface PersonalInfo {
   firstName: string
   lastName: string
   email: string
   phone: string
-  dateOfBirth: string
-  ssn: string
-  address: {
-    street: string
-    aptUnit: string
-    city: string
-    state: string
-    zipCode: string
+  dateOfBirth: {
+    month: string
+    day: string
+    year: string
   }
+  address: string
+  city: string
+  state: string
+  zipCode: string
+  ssn: string
 }
 
 export default function PersonalInfoPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    dateOfBirth: "",
-    ssn: "",
-    address: {
-      street: "",
-      aptUnit: "",
-      city: "",
-      state: "",
-      zipCode: "",
+    dateOfBirth: {
+      month: "",
+      day: "",
+      year: "",
     },
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    ssn: "",
   })
 
-  const handleInputChange = (field: string, value: string) => {
-    if (field.startsWith("address.")) {
-      const addressField = field.split(".")[1]
-      setPersonalInfo((prev) => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          [addressField]: value,
-        },
-      }))
-    } else {
-      setPersonalInfo((prev) => ({
-        ...prev,
-        [field]: value,
-      }))
-    }
-  }
+  // Generate arrays for dropdowns
+  const months = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ]
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const days = Array.from({ length: 31 }, (_, i) => {
+    const day = (i + 1).toString().padStart(2, "0")
+    return { value: day, label: day }
+  })
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Store personal info in localStorage
-    localStorage.setItem("personalInfo", JSON.stringify(personalInfo))
-
-    setIsLoading(false)
-    router.push("/plan-confirmation")
-  }
+  const currentYear = new Date().getFullYear()
+  const years = Array.from({ length: 100 }, (_, i) => {
+    const year = (currentYear - i).toString()
+    return { value: year, label: year }
+  })
 
   const states = [
     "AL",
@@ -130,206 +132,491 @@ export default function PersonalInfoPage() {
     "WY",
   ]
 
+  useEffect(() => {
+    // Check if user came from signup
+    const signupData = localStorage.getItem("takeoff_signup")
+    if (signupData) {
+      const data = JSON.parse(signupData)
+      setPersonalInfo((prev) => ({
+        ...prev,
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        email: data.email || "",
+      }))
+    }
+  }, [])
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+
+    if (!personalInfo.firstName.trim()) {
+      newErrors.firstName = "First name is required"
+    }
+
+    if (!personalInfo.lastName.trim()) {
+      newErrors.lastName = "Last name is required"
+    }
+
+    if (!personalInfo.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(personalInfo.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!personalInfo.phone.trim()) {
+      newErrors.phone = "Phone number is required"
+    } else if (!/^$$\d{3}$$ \d{3}-\d{4}$/.test(personalInfo.phone)) {
+      newErrors.phone = "Please enter a valid phone number"
+    }
+
+    if (!personalInfo.dateOfBirth.month || !personalInfo.dateOfBirth.day || !personalInfo.dateOfBirth.year) {
+      newErrors.dateOfBirth = "Date of birth is required"
+    }
+
+    if (!personalInfo.address.trim()) {
+      newErrors.address = "Address is required"
+    }
+
+    if (!personalInfo.city.trim()) {
+      newErrors.city = "City is required"
+    }
+
+    if (!personalInfo.state.trim()) {
+      newErrors.state = "State is required"
+    }
+
+    if (!personalInfo.zipCode.trim()) {
+      newErrors.zipCode = "ZIP code is required"
+    } else if (!/^\d{5}(-\d{4})?$/.test(personalInfo.zipCode)) {
+      newErrors.zipCode = "Please enter a valid ZIP code"
+    }
+
+    if (!personalInfo.ssn.trim()) {
+      newErrors.ssn = "SSN is required"
+    } else if (!/^\d{3}-\d{2}-\d{4}$/.test(personalInfo.ssn)) {
+      newErrors.ssn = "Please enter a valid SSN (XXX-XX-XXXX)"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, "")
+    if (numbers.length <= 3) return numbers
+    if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`
+  }
+
+  const formatSSN = (value: string) => {
+    const numbers = value.replace(/\D/g, "")
+    if (numbers.length <= 3) return numbers
+    if (numbers.length <= 5) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 9)}`
+  }
+
+  const handleInputChange = (field: keyof PersonalInfo, value: string) => {
+    if (field === "phone") {
+      value = formatPhone(value)
+    } else if (field === "ssn") {
+      value = formatSSN(value)
+    }
+
+    setPersonalInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }))
+    }
+  }
+
+  const handleDateChange = (field: "month" | "day" | "year", value: string) => {
+    setPersonalInfo((prev) => ({
+      ...prev,
+      dateOfBirth: {
+        ...prev.dateOfBirth,
+        [field]: value,
+      },
+    }))
+
+    // Clear date error when user selects any date field
+    if (errors.dateOfBirth) {
+      setErrors((prev) => ({
+        ...prev,
+        dateOfBirth: "",
+      }))
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Store user data
+      localStorage.setItem("takeoff_user", JSON.stringify(personalInfo))
+      localStorage.setItem("takeoff_auth", "true")
+
+      // Track analytics
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        ;(window as any).gtag("event", "personal_info_completed", {
+          event_category: "signup",
+          event_label: "personal_info_form",
+        })
+      }
+
+      // Redirect directly to payment page (skipping plan selection)
+      router.push("/payment")
+    } catch (error) {
+      console.error("Error submitting personal info:", error)
+      setErrors({ submit: "Something went wrong. Please try again." })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <Card className="bg-card border-border">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-foreground">Complete Personal Information</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Please provide your personal details to continue with your credit building journey.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Personal Details */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Personal Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-foreground">
-                        First Name *
-                      </Label>
-                      <Input
-                        id="firstName"
-                        type="text"
-                        value={personalInfo.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
-                        required
-                        className="bg-input border-border text-foreground"
-                        placeholder="Enter your first name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-foreground">
-                        Last Name *
-                      </Label>
-                      <Input
-                        id="lastName"
-                        type="text"
-                        value={personalInfo.lastName}
-                        onChange={(e) => handleInputChange("lastName", e.target.value)}
-                        required
-                        className="bg-input border-border text-foreground"
-                        placeholder="Enter your last name"
-                      />
-                    </div>
-                  </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/signup" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-4">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Sign Up
+          </Link>
+          <h1 className="text-3xl font-bold text-white mb-2">Personal Information</h1>
+          <p className="text-gray-300">We need some basic information to get you started</p>
+        </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-foreground">
-                      Email Address *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={personalInfo.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      required
-                      className="bg-input border-border text-foreground"
-                      placeholder="Enter your email address"
-                    />
-                  </div>
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex justify-between text-sm text-gray-400 mb-2">
+            <span>Step 2 of 3</span>
+            <span>67% Complete</span>
+          </div>
+          <Progress value={67} className="h-2 bg-gray-800" />
+        </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-foreground">
-                      Phone Number *
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={personalInfo.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      required
-                      className="bg-input border-border text-foreground"
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="dateOfBirth" className="text-foreground">
-                      Date of Birth *
-                    </Label>
-                    <Input
-                      id="dateOfBirth"
-                      type="date"
-                      value={personalInfo.dateOfBirth}
-                      onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-                      required
-                      className="bg-input border-border text-foreground"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="ssn" className="text-foreground">
-                      Social Security Number *
-                    </Label>
-                    <Input
-                      id="ssn"
-                      type="password"
-                      value={personalInfo.ssn}
-                      onChange={(e) => handleInputChange("ssn", e.target.value)}
-                      required
-                      className="bg-input border-border text-foreground"
-                      placeholder="XXX-XX-XXXX"
-                      maxLength={11}
-                    />
-                  </div>
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <User className="h-5 w-5 text-sky-400" />
+              Personal Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName" className="text-white">
+                    First Name
+                  </Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={personalInfo.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your first name"
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.firstName}
+                    </p>
+                  )}
                 </div>
 
-                {/* Address Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Address Information</h3>
-                  <div className="space-y-2">
-                    <Label htmlFor="street" className="text-foreground">
-                      Street Address *
-                    </Label>
-                    <Input
-                      id="street"
-                      type="text"
-                      value={personalInfo.address.street}
-                      onChange={(e) => handleInputChange("address.street", e.target.value)}
-                      required
-                      className="bg-input border-border text-foreground"
-                      placeholder="123 Main Street"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="lastName" className="text-white">
+                    Last Name
+                  </Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={personalInfo.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your last name"
+                  />
+                  {errors.lastName && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.lastName}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="aptUnit" className="text-foreground">
-                      Apt/Unit#
-                    </Label>
-                    <Input
-                      id="aptUnit"
-                      type="text"
-                      value={personalInfo.address.aptUnit}
-                      onChange={(e) => handleInputChange("address.aptUnit", e.target.value)}
-                      className="bg-input border-border text-foreground"
-                      placeholder="Apt 4B, Unit 123, etc."
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city" className="text-foreground">
-                        City *
-                      </Label>
-                      <Input
-                        id="city"
-                        type="text"
-                        value={personalInfo.address.city}
-                        onChange={(e) => handleInputChange("address.city", e.target.value)}
-                        required
-                        className="bg-input border-border text-foreground"
-                        placeholder="City"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="state" className="text-foreground">
-                        State *
-                      </Label>
-                      <Select onValueChange={(value) => handleInputChange("address.state", value)}>
-                        <SelectTrigger className="bg-input border-border text-foreground">
-                          <SelectValue placeholder="State" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border-border">
-                          {states.map((state) => (
-                            <SelectItem key={state} value={state} className="text-foreground hover:bg-accent">
-                              {state}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="zipCode" className="text-foreground">
-                        ZIP Code *
-                      </Label>
-                      <Input
-                        id="zipCode"
-                        type="text"
-                        value={personalInfo.address.zipCode}
-                        onChange={(e) => handleInputChange("address.zipCode", e.target.value)}
-                        required
-                        className="bg-input border-border text-foreground"
-                        placeholder="12345"
-                        maxLength={5}
-                      />
-                    </div>
-                  </div>
+              {/* Contact Information */}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email" className="text-white flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-sky-400" />
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={personalInfo.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your email address"
+                  />
+                  {errors.email && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Processing..." : "Continue to Plan Confirmation"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                <div>
+                  <Label htmlFor="phone" className="text-white flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-sky-400" />
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={personalInfo.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="(555) 123-4567"
+                    maxLength={14}
+                  />
+                  {errors.phone && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Date of Birth */}
+              <div>
+                <Label className="text-white flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-sky-400" />
+                  Date of Birth
+                </Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.month}
+                      onValueChange={(value) => handleDateChange("month", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value} className="text-white hover:bg-gray-700">
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.day}
+                      onValueChange={(value) => handleDateChange("day", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Day" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {days.map((day) => (
+                          <SelectItem key={day.value} value={day.value} className="text-white hover:bg-gray-700">
+                            {day.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.year}
+                      onValueChange={(value) => handleDateChange("year", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {years.map((year) => (
+                          <SelectItem key={year.value} value={year.value} className="text-white hover:bg-gray-700">
+                            {year.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {errors.dateOfBirth && (
+                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.dateOfBirth}
+                  </p>
+                )}
+              </div>
+
+              {/* Address Information */}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="address" className="text-white flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-sky-400" />
+                    Street Address
+                  </Label>
+                  <Input
+                    id="address"
+                    type="text"
+                    value={personalInfo.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your street address"
+                  />
+                  {errors.address && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.address}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="city" className="text-white">
+                      City
+                    </Label>
+                    <Input
+                      id="city"
+                      type="text"
+                      value={personalInfo.city}
+                      onChange={(e) => handleInputChange("city", e.target.value)}
+                      className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                      placeholder="City"
+                    />
+                    {errors.city && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.city}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="state" className="text-white">
+                      State
+                    </Label>
+                    <Select value={personalInfo.state} onValueChange={(value) => handleInputChange("state", value)}>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="State" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {states.map((state) => (
+                          <SelectItem key={state} value={state} className="text-white hover:bg-gray-700">
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.state && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.state}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="zipCode" className="text-white">
+                      ZIP Code
+                    </Label>
+                    <Input
+                      id="zipCode"
+                      type="text"
+                      value={personalInfo.zipCode}
+                      onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                      className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                      placeholder="12345"
+                      maxLength={10}
+                    />
+                    {errors.zipCode && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.zipCode}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* SSN */}
+              <div>
+                <Label htmlFor="ssn" className="text-white">
+                  Social Security Number
+                </Label>
+                <Input
+                  id="ssn"
+                  type="text"
+                  value={personalInfo.ssn}
+                  onChange={(e) => handleInputChange("ssn", e.target.value)}
+                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  placeholder="XXX-XX-XXXX"
+                  maxLength={11}
+                />
+                {errors.ssn && (
+                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.ssn}
+                  </p>
+                )}
+                <p className="text-gray-400 text-sm mt-1">
+                  Your SSN is encrypted and used only for identity verification
+                </p>
+              </div>
+
+              {/* Submit Error */}
+              {errors.submit && (
+                <Alert className="bg-red-900/20 border-red-500/50">
+                  <AlertCircle className="h-4 w-4 text-red-400" />
+                  <AlertDescription className="text-red-400">{errors.submit}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 text-lg font-semibold"
+              >
+                {isLoading ? "Processing..." : "Continue to Payment"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Security Notice */}
+        <div className="mt-6 p-4 bg-gray-900 border border-gray-700 rounded-lg">
+          <p className="text-gray-300 text-sm text-center">
+            🔒 Your information is encrypted and secure. We use bank-level security to protect your data.
+          </p>
         </div>
       </div>
     </div>

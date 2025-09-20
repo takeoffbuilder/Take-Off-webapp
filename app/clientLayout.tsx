@@ -1,30 +1,31 @@
 "use client"
 
-import { Inter } from "next/font/google"
-import "./globals.css"
-import React from "react"
+import type React from "react"
+import ScrollToTop from "@/components/scroll-to-top"
+import FooterNavigation from "@/components/footer-navigation"
+import { usePathname } from "next/navigation"
 
-const inter = Inter({ subsets: ["latin"] })
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const showFooterNav = ["/dashboard", "/credit-reports", "/affiliate", "/settings"].includes(pathname)
 
-// Component to handle scroll restoration
-function ScrollToTop() {
-  React.useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-  return null
+  return (
+    <>
+      {children}
+      {showFooterNav && <FooterNavigation />}
+    </>
+  )
 }
 
-export default function ClientLayout({
+export default function ClientRootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ScrollToTop />
-        {children}
-      </body>
-    </html>
+    <body>
+      <ScrollToTop />
+      <LayoutContent>{children}</LayoutContent>
+    </body>
   )
 }

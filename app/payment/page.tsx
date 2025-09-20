@@ -159,35 +159,35 @@ export default function PaymentPage() {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading payment page...</p>
+          <p className="text-gray-300">Loading payment page...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <Header showAuth={false} />
 
       <main className="max-w-4xl mx-auto px-4 py-8 pt-24">
         <div className="mb-6">
-          <Link href="/dashboard" className="flex items-center text-sky-600 hover:text-sky-700 mb-4">
+          <Link href="/dashboard" className="flex items-center text-sky-400 hover:text-sky-300 mb-4 transition-colors">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Make a Payment</h1>
-          <p className="text-gray-600">Complete your monthly payment to continue building your credit</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Make a Payment</h1>
+          <p className="text-gray-300">Complete your monthly payment to continue building your credit</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Payment Form */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <CreditCard className="h-5 w-5 text-sky-500" />
                   Payment Method
                 </CardTitle>
@@ -201,16 +201,17 @@ export default function PaymentPage() {
                   {/* Existing Payment Methods */}
                   {paymentMethods.length > 0 && (
                     <div className="space-y-3">
-                      <div className="font-medium text-gray-900">Saved Payment Methods</div>
+                      <div className="font-medium text-white">Saved Payment Methods</div>
                       {paymentMethods.map((card) => (
                         <div key={card.id} className="flex items-center space-x-3">
                           <RadioGroupItem
                             value="existing"
                             id={`card-${card.id}`}
                             onClick={() => setSelectedCardId(card.id)}
+                            className="border-gray-600 text-sky-500"
                           />
                           <Label htmlFor={`card-${card.id}`} className="flex-1 cursor-pointer">
-                            <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                            <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded flex items-center justify-center">
                                   <span className="text-white text-xs font-bold">
@@ -218,16 +219,16 @@ export default function PaymentPage() {
                                   </span>
                                 </div>
                                 <div>
-                                  <div className="font-medium">
+                                  <div className="font-medium text-white">
                                     {card.brand} •••• {card.last4}
                                   </div>
-                                  <div className="text-sm text-gray-500">
+                                  <div className="text-sm text-gray-400">
                                     Expires {card.expiryMonth}/{card.expiryYear}
                                   </div>
                                 </div>
                               </div>
                               {card.isDefault && (
-                                <div className="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full">Default</div>
+                                <div className="text-xs bg-sky-900 text-sky-300 px-2 py-1 rounded-full">Default</div>
                               )}
                             </div>
                           </Label>
@@ -239,17 +240,17 @@ export default function PaymentPage() {
                   {/* Add New Card */}
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="new" id="new-card" />
-                      <Label htmlFor="new-card" className="font-medium text-gray-900">
+                      <RadioGroupItem value="new" id="new-card" className="border-gray-600 text-sky-500" />
+                      <Label htmlFor="new-card" className="font-medium text-white">
                         Add New Payment Method
                       </Label>
                     </div>
 
                     {selectedPaymentMethod === "new" && (
-                      <div className="ml-6 space-y-4 p-4 border rounded-lg bg-gray-50">
+                      <div className="ml-6 space-y-4 p-4 border border-gray-600 rounded-lg bg-gray-800">
                         <div className="grid grid-cols-1 gap-4">
                           <div>
-                            <Label htmlFor="cardNumber" className="text-gray-900">
+                            <Label htmlFor="cardNumber" className="text-white">
                               Card Number
                             </Label>
                             <Input
@@ -258,12 +259,13 @@ export default function PaymentPage() {
                               value={newCardData.cardNumber}
                               onChange={handleCardNumberChange}
                               maxLength={19}
+                              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500"
                             />
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <Label htmlFor="expiryDate" className="text-gray-900">
+                              <Label htmlFor="expiryDate" className="text-white">
                                 Expiry Date
                               </Label>
                               <Input
@@ -272,10 +274,11 @@ export default function PaymentPage() {
                                 value={newCardData.expiryDate}
                                 onChange={handleExpiryDateChange}
                                 maxLength={5}
+                                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500"
                               />
                             </div>
                             <div>
-                              <Label htmlFor="cvv" className="text-gray-900">
+                              <Label htmlFor="cvv" className="text-white">
                                 CVV
                               </Label>
                               <Input
@@ -284,12 +287,13 @@ export default function PaymentPage() {
                                 value={newCardData.cvv}
                                 onChange={handleCvvChange}
                                 maxLength={4}
+                                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500"
                               />
                             </div>
                           </div>
 
                           <div>
-                            <Label htmlFor="cardholderName" className="text-gray-900">
+                            <Label htmlFor="cardholderName" className="text-white">
                               Cardholder Name
                             </Label>
                             <Input
@@ -297,11 +301,12 @@ export default function PaymentPage() {
                               placeholder="John Doe"
                               value={newCardData.cardholderName}
                               onChange={(e) => setNewCardData((prev) => ({ ...prev, cardholderName: e.target.value }))}
+                              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500"
                             />
                           </div>
 
                           <div>
-                            <Label htmlFor="zipCode" className="text-gray-900">
+                            <Label htmlFor="zipCode" className="text-white">
                               ZIP Code
                             </Label>
                             <Input
@@ -310,6 +315,7 @@ export default function PaymentPage() {
                               value={newCardData.zipCode}
                               onChange={handleZipCodeChange}
                               maxLength={5}
+                              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500"
                             />
                           </div>
                         </div>
@@ -319,12 +325,12 @@ export default function PaymentPage() {
                 </RadioGroup>
 
                 {/* Security Information */}
-                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="mt-6 p-4 bg-green-900/20 rounded-lg border border-green-700/30">
                   <div className="flex items-center gap-2 mb-2">
-                    <Shield className="h-4 w-4 text-green-600" />
-                    <span className="font-medium text-green-800">Secure Payment</span>
+                    <Shield className="h-4 w-4 text-green-400" />
+                    <span className="font-medium text-green-300">Secure Payment</span>
                   </div>
-                  <p className="text-sm text-green-700">
+                  <p className="text-sm text-green-200">
                     Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect
                     your data.
                   </p>
@@ -333,19 +339,23 @@ export default function PaymentPage() {
             </Card>
 
             {/* Auto Pay Promotion */}
-            <Card className="mt-6">
+            <Card className="mt-6 bg-gray-900 border-gray-700">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
-                    <Check className="h-5 w-5 text-sky-600" />
+                  <div className="w-10 h-10 bg-sky-900 rounded-full flex items-center justify-center">
+                    <Check className="h-5 w-5 text-sky-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Never Miss a Payment</h3>
-                    <p className="text-gray-600 text-sm mb-3">
+                    <h3 className="font-semibold text-white mb-2">Never Miss a Payment</h3>
+                    <p className="text-gray-300 text-sm mb-3">
                       Set up AutoPay to ensure your payments are always on time and maintain your perfect payment
                       history.
                     </p>
-                    <Button variant="outline" size="sm" className="bg-transparent hover:bg-gray-50 transition-colors">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                    >
                       Enable AutoPay
                     </Button>
                   </div>
@@ -356,40 +366,40 @@ export default function PaymentPage() {
 
           {/* Payment Summary */}
           <div>
-            <Card>
+            <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
-                <CardTitle>Payment Summary</CardTitle>
+                <CardTitle className="text-white">Payment Summary</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Amount Due</span>
-                    <span className="font-semibold text-2xl">$25.00</span>
+                    <span className="text-gray-300">Amount Due</span>
+                    <span className="font-semibold text-2xl text-white">$25.00</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Due Date</span>
-                    <span className="font-medium">July 15, 2024</span>
+                    <span className="text-gray-300">Due Date</span>
+                    <span className="font-medium text-white">July 15, 2024</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Account</span>
-                    <span className="font-medium">
+                    <span className="text-gray-300">Account</span>
+                    <span className="font-medium text-white">
                       {userData.firstName} {userData.lastName}
                     </span>
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Payment For</span>
-                    <span className="font-medium">Monthly Plan</span>
+                    <span className="text-gray-300">Payment For</span>
+                    <span className="font-medium text-white">Monthly Plan</span>
                   </div>
 
-                  <hr className="my-4" />
+                  <hr className="my-4 border-gray-700" />
 
                   <Button
                     onClick={handlePayment}
                     disabled={!isFormValid() || isProcessing}
-                    className="w-full bg-sky-500 hover:bg-sky-600 transition-colors disabled:opacity-50"
+                    className="w-full bg-sky-500 hover:bg-sky-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isProcessing ? (
                       <div className="flex items-center gap-2">
@@ -401,7 +411,7 @@ export default function PaymentPage() {
                     )}
                   </Button>
 
-                  <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mt-4">
+                  <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mt-4">
                     <Lock className="h-3 w-3" />
                     <span>Secured by 256-bit SSL encryption</span>
                   </div>
@@ -410,27 +420,27 @@ export default function PaymentPage() {
             </Card>
 
             {/* Account Information */}
-            <Card className="mt-6">
+            <Card className="mt-6 bg-gray-900 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg">Account Information</CardTitle>
+                <CardTitle className="text-lg text-white">Account Information</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Name</span>
-                    <span className="font-medium">
+                    <span className="text-gray-300">Name</span>
+                    <span className="font-medium text-white">
                       {userData.firstName} {userData.lastName}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Email</span>
-                    <span className="font-medium">{userData.email}</span>
+                    <span className="text-gray-300">Email</span>
+                    <span className="font-medium text-white">{userData.email}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Status</span>
+                    <span className="text-gray-300">Status</span>
                     <div className="flex items-center gap-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-green-600 font-medium">Active</span>
+                      <span className="text-green-400 font-medium">Active</span>
                     </div>
                   </div>
                 </div>
@@ -442,11 +452,11 @@ export default function PaymentPage() {
 
       {/* Processing Overlay */}
       {isProcessing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 text-center">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold mb-2">Processing Payment</h3>
-            <p className="text-gray-600">Please wait while we process your payment...</p>
+            <h3 className="text-lg font-semibold mb-2 text-white">Processing Payment</h3>
+            <p className="text-gray-300">Please wait while we process your payment...</p>
           </div>
         </div>
       )}

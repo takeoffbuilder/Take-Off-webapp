@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-
+import { ChevronLeft } from "lucide-react"
 import type React from "react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -20,6 +20,14 @@ export default function SignUpPage() {
     confirmPassword: "",
     agreeToTerms: false,
   })
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push("/")
+    }
+  }
 
   useEffect(() => {
     // Redirect to signin since we now have a unified flow
@@ -87,6 +95,14 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors mb-6"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span className="text-sm">Back</span>
+        </button>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
         <p className="text-gray-600">Redirecting...</p>
       </div>
