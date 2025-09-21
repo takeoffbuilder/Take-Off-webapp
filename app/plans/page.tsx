@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Zap, Star } from "lucide-react"
+import { Check, Zap, Star, Rocket, Crown, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +11,7 @@ import Link from "next/link"
 export default function PlansPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly")
 
-  const plans = [
+  const basicPlans = [
     {
       name: "Starter Boost",
       description: "Perfect for credit building beginners",
@@ -19,16 +19,18 @@ export default function PlansPage() {
       annualPrice: 150,
       savings: 30,
       features: [
-        "1 Credit Builder Account",
+        "$1500 Builder Account",
         "Tri-bureau reporting",
         "Credit score monitoring",
         "Mobile app access",
         "Email support",
         "Financial education resources",
+        "2-year backdated history (+$50)",
       ],
       cta: "Get Started",
       href: "/signup?plan=starter",
       popular: false,
+      icon: <Check className="w-6 h-6 text-sky-500" />,
     },
     {
       name: "Power Boost",
@@ -37,7 +39,7 @@ export default function PlansPage() {
       annualPrice: 250,
       savings: 50,
       features: [
-        "2 Credit Builder Accounts",
+        "$2500 Builder Account",
         "Tri-bureau reporting",
         "Credit score monitoring",
         "Rent reporting included",
@@ -45,10 +47,12 @@ export default function PlansPage() {
         "Advanced credit insights",
         "Credit dispute assistance",
         "Financial coaching",
+        "2-year backdated history (+$50)",
       ],
       cta: "Get Started",
       href: "/signup?plan=power",
       popular: true,
+      icon: <Zap className="w-6 h-6 text-green-500" />,
     },
     {
       name: "Max Boost",
@@ -57,7 +61,7 @@ export default function PlansPage() {
       annualPrice: 350,
       savings: 70,
       features: [
-        "3 Credit Builder Accounts",
+        "$3500 Builder Account",
         "Tri-bureau reporting",
         "Credit score monitoring",
         "Rent reporting included",
@@ -67,10 +71,87 @@ export default function PlansPage() {
         "Credit dispute assistance",
         "1-on-1 financial coaching",
         "Identity monitoring",
+        "2-year backdated history (+$50)",
       ],
       cta: "Get Started",
       href: "/signup?plan=max",
       popular: false,
+      icon: <Star className="w-6 h-6 text-purple-500" />,
+    },
+  ]
+
+  const premiumPlans = [
+    {
+      name: "Blaster Boost",
+      description: "Accelerated credit building for serious users",
+      monthlyPrice: 50,
+      annualPrice: 500,
+      savings: 100,
+      features: [
+        "$5000 Builder Account",
+        "Tri-bureau reporting",
+        "Real-time credit monitoring",
+        "Rent & utility reporting",
+        "Dedicated account manager",
+        "Priority dispute resolution",
+        "Advanced financial coaching",
+        "Identity theft protection",
+        "Credit optimization tools",
+        "2-year backdated history (+$50)",
+      ],
+      cta: "Get Started",
+      href: "/signup?plan=blaster",
+      popular: false,
+      icon: <Rocket className="w-6 h-6 text-orange-500" />,
+    },
+    {
+      name: "Super Boost",
+      description: "Premium credit building experience",
+      monthlyPrice: 100,
+      annualPrice: 1000,
+      savings: 200,
+      features: [
+        "$10000 Builder Account",
+        "Tri-bureau reporting",
+        "24/7 credit monitoring",
+        "All reporting services included",
+        "White-glove service",
+        "Instant dispute resolution",
+        "Personal credit strategist",
+        "Premium identity protection",
+        "Investment account reporting",
+        "Credit score guarantee",
+        "2-year backdated history (+$50)",
+      ],
+      cta: "Get Started",
+      href: "/signup?plan=super",
+      popular: true,
+      icon: <Crown className="w-6 h-6 text-yellow-500" />,
+    },
+    {
+      name: "Star Boost",
+      description: "Ultimate credit building solution",
+      monthlyPrice: 150,
+      annualPrice: 1500,
+      savings: 300,
+      features: [
+        "$20000 Builder Account",
+        "Tri-bureau reporting",
+        "Real-time alerts & monitoring",
+        "Comprehensive reporting suite",
+        "Concierge-level service",
+        "Immediate dispute handling",
+        "Executive credit consultant",
+        "Enterprise identity protection",
+        "Business credit building",
+        "Credit score optimization",
+        "Exclusive financial products",
+        "2-year backdated history (+$50)",
+      ],
+      cta: "Get Started",
+      href: "/signup?plan=star",
+      popular: false,
+      icon: <Sparkles className="w-6 h-6 text-pink-500" />,
     },
   ]
 
@@ -112,145 +193,155 @@ export default function PlansPage() {
             </div>
           </div>
 
-          {/* Plans Grid */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {plans.map((plan, index) => (
-              <Card
-                key={plan.name}
-                className={`relative bg-gray-900 border-gray-700 text-white ${
-                  plan.popular ? "ring-2 ring-sky-500 scale-105" : ""
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-sky-500 text-white px-4 py-1 flex items-center gap-1">
-                      <Star className="w-3 h-3" />
-                      Most Popular
-                    </Badge>
-                  </div>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
-                  <CardDescription className="text-gray-400">{plan.description}</CardDescription>
-
-                  <div className="mt-4">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-4xl font-bold text-white">
-                        ${billingCycle === "monthly" ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12)}
-                      </span>
-                      <span className="text-gray-400">/month</span>
+          {/* Basic Plans Grid */}
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center text-white mb-12">Essential Plans</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {basicPlans.map((plan, index) => (
+                <Card
+                  key={plan.name}
+                  className={`relative bg-gray-900 border-gray-700 text-white ${
+                    plan.popular ? "ring-2 ring-sky-500 scale-105" : ""
+                  }`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-sky-500 text-white px-4 py-1 flex items-center gap-1">
+                        <Star className="w-3 h-3" />
+                        Most Popular
+                      </Badge>
                     </div>
+                  )}
 
-                    {billingCycle === "annual" && (
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-400">Billed annually: ${plan.annualPrice}</p>
-                        <p className="text-sm text-sky-400 font-medium">Save ${plan.savings}/year</p>
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                      {plan.icon}
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
+                    <CardDescription className="text-gray-400">{plan.description}</CardDescription>
+
+                    <div className="mt-4">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl font-bold text-white">
+                          ${billingCycle === "monthly" ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12)}
+                        </span>
+                        <span className="text-gray-400">/month</span>
                       </div>
-                    )}
-                  </div>
-                </CardHeader>
 
-                <CardContent className="pb-6">
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-300 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                      {billingCycle === "annual" && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-400">Billed annually: ${plan.annualPrice}</p>
+                          <p className="text-sm text-sky-400 font-medium">Save ${plan.savings}/year</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
 
-                  <Link href={plan.href} className="block">
-                    <Button
-                      className={`w-full h-12 text-base font-semibold transition-colors ${
-                        plan.popular
-                          ? "bg-sky-500 hover:bg-sky-600 text-white"
-                          : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
-                      }`}
-                    >
-                      {plan.popular && <Zap className="w-4 h-4 mr-2" />}
-                      {plan.cta}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="pb-6">
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5" />
+                          <span
+                            className={`text-gray-300 text-sm ${feature.includes("+$50") ? "text-yellow-400" : ""}`}
+                          >
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link href={plan.href} className="block">
+                      <Button
+                        className={`w-full h-12 text-base font-semibold transition-colors ${
+                          plan.popular
+                            ? "bg-sky-500 hover:bg-sky-600 text-white"
+                            : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
+                        }`}
+                      >
+                        {plan.popular && <Zap className="w-4 h-4 mr-2" />}
+                        {plan.cta}
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          {/* Features Comparison */}
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold text-center text-white mb-12">Compare All Features</h2>
+          {/* Premium Plans Grid */}
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold text-center text-white mb-12">Premium Plans</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {premiumPlans.map((plan, index) => (
+                <Card
+                  key={plan.name}
+                  className={`relative bg-gradient-to-br from-gray-900 to-gray-800 border-gray-600 text-white ${
+                    plan.popular ? "ring-2 ring-yellow-500 scale-105" : ""
+                  } shadow-xl`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-yellow-500 text-black px-4 py-1 flex items-center gap-1 font-bold">
+                        <Crown className="w-3 h-3" />
+                        Premium Choice
+                      </Badge>
+                    </div>
+                  )}
 
-            <div className="bg-gray-900 rounded-2xl border border-gray-700 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-700">
-                      <th className="text-left p-6 text-white font-semibold">Features</th>
-                      <th className="text-center p-6 text-white font-semibold">Starter Boost</th>
-                      <th className="text-center p-6 text-white font-semibold relative">
-                        Power Boost
-                        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-sky-500 text-white text-xs">
-                          Popular
-                        </Badge>
-                      </th>
-                      <th className="text-center p-6 text-white font-semibold">Max Boost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { feature: "Credit Builder Accounts", starter: "1", power: "2", max: "3" },
-                      { feature: "Tri-bureau Reporting", starter: true, power: true, max: true },
-                      { feature: "Credit Score Monitoring", starter: true, power: true, max: true },
-                      { feature: "Mobile App Access", starter: true, power: true, max: true },
-                      { feature: "Rent Reporting", starter: false, power: true, max: true },
-                      { feature: "Utility Bill Reporting", starter: false, power: false, max: true },
-                      { feature: "Credit Dispute Assistance", starter: false, power: true, max: true },
-                      { feature: "Financial Coaching", starter: false, power: "Group", max: "1-on-1" },
-                      { feature: "Identity Monitoring", starter: false, power: false, max: true },
-                      { feature: "Support Level", starter: "Email", power: "Priority", max: "Premium" },
-                    ].map((row, index) => (
-                      <tr key={index} className="border-b border-gray-800 last:border-b-0">
-                        <td className="p-6 text-gray-300 font-medium">{row.feature}</td>
-                        <td className="p-6 text-center">
-                          {typeof row.starter === "boolean" ? (
-                            row.starter ? (
-                              <Check className="w-5 h-5 text-sky-500 mx-auto" />
-                            ) : (
-                              <span className="text-gray-500">—</span>
-                            )
-                          ) : (
-                            <span className="text-white">{row.starter}</span>
-                          )}
-                        </td>
-                        <td className="p-6 text-center">
-                          {typeof row.power === "boolean" ? (
-                            row.power ? (
-                              <Check className="w-5 h-5 text-sky-500 mx-auto" />
-                            ) : (
-                              <span className="text-gray-500">—</span>
-                            )
-                          ) : (
-                            <span className="text-white">{row.power}</span>
-                          )}
-                        </td>
-                        <td className="p-6 text-center">
-                          {typeof row.max === "boolean" ? (
-                            row.max ? (
-                              <Check className="w-5 h-5 text-sky-500 mx-auto" />
-                            ) : (
-                              <span className="text-gray-500">—</span>
-                            )
-                          ) : (
-                            <span className="text-white">{row.max}</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      {plan.icon}
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
+                    <CardDescription className="text-gray-300">{plan.description}</CardDescription>
+
+                    <div className="mt-4">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl font-bold text-white">
+                          ${billingCycle === "monthly" ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12)}
+                        </span>
+                        <span className="text-gray-400">/month</span>
+                      </div>
+
+                      {billingCycle === "annual" && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-400">Billed annually: ${plan.annualPrice}</p>
+                          <p className="text-sm text-yellow-400 font-medium">Save ${plan.savings}/year</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="pb-6">
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                          <span
+                            className={`text-gray-200 text-sm ${feature.includes("+$50") ? "text-yellow-400" : ""}`}
+                          >
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link href={plan.href} className="block">
+                      <Button
+                        className={`w-full h-12 text-base font-semibold transition-colors ${
+                          plan.popular
+                            ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+                            : "bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white"
+                        }`}
+                      >
+                        {plan.popular && <Crown className="w-4 h-4 mr-2" />}
+                        {plan.cta}
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
 
@@ -263,7 +354,12 @@ export default function PlansPage() {
                 {
                   question: "How quickly will I see results?",
                   answer:
-                    "Most users see credit score improvements within 30-60 days of their first reported payment. Results vary based on your starting credit profile and payment history.",
+                    "Most users see credit score improvements within 30-60 days of their first reported payment. Results vary based on your starting credit profile and payment history. Higher builder account amounts typically lead to faster results.",
+                },
+                {
+                  question: "What is the 2-year backdated history option?",
+                  answer:
+                    "For an additional $50, we can add 2 years of positive payment history to your credit builder account, giving you an immediate boost to your credit age and payment history - two key factors in your credit score.",
                 },
                 {
                   question: "Is there a credit check to get started?",
@@ -281,9 +377,9 @@ export default function PlansPage() {
                     "We report to all three major credit bureaus: Experian, Equifax, and TransUnion, giving you comprehensive credit building coverage.",
                 },
                 {
-                  question: "What's the difference between the plans?",
+                  question: "What's the difference between Essential and Premium plans?",
                   answer:
-                    "The main differences are the number of credit builder accounts and additional features like rent reporting, coaching, and support levels. More accounts typically lead to faster credit building.",
+                    "Essential plans focus on basic credit building with builder accounts up to $3,500. Premium plans offer larger builder accounts ($5,000-$20,000), dedicated support, advanced features, and white-glove service for serious credit builders.",
                 },
               ].map((faq, index) => (
                 <Card key={index} className="bg-gray-900 border-gray-700">

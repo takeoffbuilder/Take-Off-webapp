@@ -7,8 +7,22 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { User, Bell, Shield, CreditCard, LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function Settings() {
+  const router = useRouter()
+
+  const handleSignOut = () => {
+    // Clear all localStorage items
+    localStorage.removeItem("takeoff_auth")
+    localStorage.removeItem("takeoff_user")
+    localStorage.removeItem("takeoff_selected_plan")
+    localStorage.removeItem("takeoff_payment_completed")
+
+    // Redirect to landing page
+    router.push("/")
+  }
+
   return (
     <div className="min-h-screen bg-black text-white pb-20">
       <div className="container mx-auto px-4 py-8">
@@ -207,6 +221,7 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
+              onClick={handleSignOut}
               variant="outline"
               className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white w-full bg-transparent"
             >

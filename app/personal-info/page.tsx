@@ -12,7 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, User, Phone, Mail, Calendar, MapPin, AlertCircle } from "lucide-react"
-import Link from "next/link"
 
 interface PersonalInfo {
   firstName: string
@@ -35,6 +34,7 @@ export default function PersonalInfoPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: "",
     lastName: "",
@@ -133,8 +133,11 @@ export default function PersonalInfoPage() {
   ]
 
   useEffect(() => {
-    // Check if user came from signup
+    // Check if user came from signup or has selected plan
     const signupData = localStorage.getItem("takeoff_signup")
+    const selectedPlanData = localStorage.getItem("takeoff_selected_plan")
+    const userData = localStorage.getItem("takeoff_user")
+
     if (signupData) {
       const data = JSON.parse(signupData)
       setPersonalInfo((prev) => ({
@@ -143,6 +146,21 @@ export default function PersonalInfoPage() {
         lastName: data.lastName || "",
         email: data.email || "",
       }))
+    }
+
+    if (userData) {
+      const data = JSON.parse(userData)
+      setPersonalInfo((prev) => ({
+        ...prev,
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        email: data.email || "",
+      }))
+    }
+
+    if (selectedPlanData) {
+      const planData = JSON.parse(selectedPlanData)
+      setSelectedPlan(planData.plan)
     }
   }, [])
 
@@ -165,8 +183,13 @@ export default function PersonalInfoPage() {
 
     if (!personalInfo.phone.trim()) {
       newErrors.phone = "Phone number is required"
-    } else if (!/^$$\d{3}$$ \d{3}-\d{4}$/.test(personalInfo.phone)) {
-      newErrors.phone = "Please enter a valid phone number"
+    } else {
+      // Extract only digits from phone number
+      const phoneDigits = personalInfo.phone.replace(/\D/g, "")
+      // Accept 7 digits as valid (local number) or 10 digits (full number)
+      if (phoneDigits.length !== 7 && phoneDigits.length !== 10) {
+        newErrors.phone = "Please enter a valid phone number (7 or 10 digits)"
+      }
     }
 
     if (!personalInfo.dateOfBirth.month || !personalInfo.dateOfBirth.day || !personalInfo.dateOfBirth.year) {
@@ -203,6 +226,14 @@ export default function PersonalInfoPage() {
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "")
+
+    // Handle 7-digit numbers (local format)
+    if (numbers.length <= 7) {
+      if (numbers.length <= 3) return numbers
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+    }
+
+    // Handle 10-digit numbers (full format with area code)
     if (numbers.length <= 3) return numbers
     if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`
     return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`
@@ -276,10 +307,13 @@ export default function PersonalInfoPage() {
         ;(window as any).gtag("event", "personal_info_completed", {
           event_category: "signup",
           event_label: "personal_info_form",
+          custom_parameters: {
+            selected_plan: selectedPlan,
+          },
         })
       }
 
-      // Redirect directly to payment page (skipping plan selection)
+      // Always redirect directly to payment page since plan is already selected
       router.push("/payment")
     } catch (error) {
       console.error("Error submitting personal info:", error)
@@ -289,17 +323,37 @@ export default function PersonalInfoPage() {
     }
   }
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push("/")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/signup" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-4">
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-4 transition-colors"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Sign Up
-          </Link>
+            Back
+          </button>
           <h1 className="text-3xl font-bold text-white mb-2">Personal Information</h1>
           <p className="text-gray-300">We need some basic information to get you started</p>
+
+          {/* Show selected plan */}
+          {selectedPlan && (
+            <div className="mt-4 p-3 bg-sky-900/20 border border-sky-700 rounded-lg">
+              <p className="text-sm text-sky-300">
+                Selected Plan: <span className="font-semibold capitalize">{selectedPlan} Boost</span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Progress */}
@@ -397,7 +451,7 @@ export default function PersonalInfoPage() {
                     value={personalInfo.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                    placeholder="(555) 123-4567"
+                    placeholder="555-1234 or (555) 123-4567"
                     maxLength={14}
                   />
                   {errors.phone && (
@@ -406,6 +460,9 @@ export default function PersonalInfoPage() {
                       {errors.phone}
                     </p>
                   )}
+                  <p className="text-gray-400 text-xs mt-1">
+                    Enter 7 digits for local number or 10 digits with area code
+                  </p>
                 </div>
               </div>
 

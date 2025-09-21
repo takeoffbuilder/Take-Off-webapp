@@ -1,417 +1,314 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Header from "@/components/header"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Check, CreditCard, DollarSign, Shield, TrendingUp, ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { ArrowLeft, Check, Star, Zap, Shield, TrendingUp, Users, Award } from "lucide-react"
 
-interface UserData {
-  firstName: string
-  lastName: string
-  email: string
-  isVerified: boolean
+interface Plan {
+  id: string
+  name: string
+  price: number
+  builderAmount: string
+  description: string
+  features: string[]
+  popular?: boolean
+  premium?: boolean
 }
 
 export default function ServicesPage() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<"credit-line" | "secured-loan">("credit-line")
-  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
+  // Check if user already has a selected plan and redirect
   useEffect(() => {
-    // Check if user is authenticated
-    const authData = localStorage.getItem("takeoff_auth")
-    const storedUser = localStorage.getItem("takeoff_user")
+    const existingPlan = localStorage.getItem("takeoff_selected_plan")
+    if (existingPlan) {
+      // User already has a plan selected, redirect to personal info
+      router.push("/personal-info")
+      return
+    }
 
-    if (!authData) {
+    // Check if user is authenticated
+    const isAuth = localStorage.getItem("takeoff_auth")
+    if (!isAuth) {
       router.push("/signin")
       return
     }
-
-    if (storedUser) {
-      setUserData(JSON.parse(storedUser))
-    }
-
-    setIsLoading(false)
   }, [router])
 
-  const creditLineOptions = [
+  const plans: Plan[] = [
     {
+      id: "starter",
       name: "Starter Boost",
-      creditLimit: "$1,500",
-      price: "$15",
-      period: "/month",
-      description: "Perfect for building your first credit line",
+      price: 15,
+      builderAmount: "$1500 Builder Account",
+      description: "Perfect for beginners starting their credit journey",
       features: [
-        "$1,500 credit line",
-        "Monthly credit reporting",
-        "1 Bureau Credit Report Access",
-        "Basic credit monitoring",
+        "Credit monitoring",
+        "Basic credit education",
+        "Monthly credit score updates",
+        "Email support",
         "Mobile app access",
-        "Email support",
-        "Automatic payments",
       ],
-      buttonText: "Choose Starter",
-      gradient: "from-blue-500 to-blue-600",
     },
     {
+      id: "power",
       name: "Power Boost",
-      creditLimit: "$2,500",
-      price: "$25",
-      period: "/month",
-      description: "Accelerate your credit building journey",
+      price: 25,
+      builderAmount: "$2500 Builder Account",
+      description: "Accelerate your credit building with advanced tools",
       features: [
-        "$2,500 credit line",
-        "Tri-bureau credit reporting",
-        "2 Bureau Credit Report Access",
-        "Advanced credit monitoring",
-        "Credit score alerts",
+        "Everything in Starter",
+        "Advanced credit insights",
+        "Personalized recommendations",
         "Priority support",
-        "Financial education resources",
-        "Rent payment reporting",
-      ],
-      buttonText: "Choose Power",
-      gradient: "from-sky-500 to-sky-600",
-    },
-    {
-      name: "Max Boost",
-      creditLimit: "$3,500",
-      price: "$35",
-      period: "/month",
-      description: "Maximum credit building power",
-      features: [
-        "$3,500 credit line",
-        "Tri-bureau reporting",
-        "3 Bureau Credit Report Access",
-        "Real-time credit monitoring",
-        "Credit coaching sessions",
-        "Dedicated support",
-        "Identity theft protection",
         "Credit dispute assistance",
-        "Utility bill reporting",
+        "Financial planning tools",
       ],
-      buttonText: "Choose Max",
-      gradient: "from-purple-500 to-purple-600",
+      popular: true,
+    },
+    {
+      id: "max",
+      name: "Max Boost",
+      price: 35,
+      builderAmount: "$3500 Builder Account",
+      description: "Maximum credit building power for serious users",
+      features: [
+        "Everything in Power",
+        "Dedicated credit advisor",
+        "Expedited dispute resolution",
+        "Advanced analytics dashboard",
+        "Custom credit strategies",
+        "VIP customer support",
+      ],
+    },
+    {
+      id: "blaster",
+      name: "Blaster Boost",
+      price: 50,
+      builderAmount: "$5000 Builder Account",
+      description: "Premium credit building for ambitious goals",
+      features: [
+        "Everything in Max",
+        "Premium credit monitoring",
+        "Identity theft protection",
+        "Credit optimization strategies",
+        "Quarterly strategy reviews",
+        "Direct lender relationships",
+      ],
+      premium: true,
+    },
+    {
+      id: "super",
+      name: "Super Boost",
+      price: 100,
+      builderAmount: "$10000 Builder Account",
+      description: "Super-charged credit building for maximum impact",
+      features: [
+        "Everything in Blaster",
+        "White-glove service",
+        "Custom credit products",
+        "Investment opportunities",
+        "Wealth building strategies",
+        "Personal finance concierge",
+      ],
+      premium: true,
+    },
+    {
+      id: "star",
+      name: "Star Boost",
+      price: 150,
+      builderAmount: "$20000 Builder Account",
+      description: "Ultimate credit and wealth building experience",
+      features: [
+        "Everything in Super",
+        "Private banking access",
+        "Exclusive investment deals",
+        "Tax optimization strategies",
+        "Estate planning assistance",
+        "24/7 dedicated support team",
+      ],
+      premium: true,
     },
   ]
 
-  const securedLoanOptions = [
-    {
-      name: "Starter Loan",
-      loanAmount: "$1,500",
-      price: "$15",
-      period: "/month",
-      description: "Build credit with a secured installment loan",
-      features: [
-        "$1,500 secured loan",
-        "12-24 month terms",
-        "Monthly credit reporting",
-        "1 Bureau Credit Report Access",
-        "Fixed interest rate",
-        "Automatic payments",
-        "Email support",
-      ],
-      buttonText: "Choose Starter",
-      gradient: "from-green-500 to-green-600",
-    },
-    {
-      name: "Power Loan",
-      loanAmount: "$2,500",
-      price: "$25",
-      period: "/month",
-      description: "Stronger credit building with higher loan amount",
-      features: [
-        "$2,500 secured loan",
-        "12-36 month terms",
-        "Tri-bureau credit reporting",
-        "2 Bureau Credit Report Access",
-        "Competitive interest rate",
-        "Flexible payment options",
-        "Priority support",
-        "Credit education resources",
-      ],
-      buttonText: "Choose Power",
-      gradient: "from-emerald-500 to-emerald-600",
-    },
-    {
-      name: "Max Loan",
-      loanAmount: "$3,500",
-      price: "$35",
-      period: "/month",
-      description: "Maximum loan amount for serious credit builders",
-      features: [
-        "$3,500 secured loan",
-        "12-48 month terms",
-        "Tri-bureau reporting",
-        "3 Bureau Credit Report Access",
-        "Best interest rates",
-        "Custom payment plans",
-        "Dedicated support",
-        "Credit coaching included",
-        "Early payoff options",
-      ],
-      buttonText: "Choose Max",
-      gradient: "from-teal-500 to-teal-600",
-    },
-  ]
+  const handlePlanSelect = async (planId: string) => {
+    setSelectedPlan(planId)
+    setIsLoading(true)
 
-  const handleSelectPlan = async (planName: string, planType: string) => {
-    // Get the plan details for the URL
-    const selectedOption = currentOptions.find((option) => option.name === planName)
-    if (!selectedOption) return
+    try {
+      // Store selected plan
+      localStorage.setItem(
+        "takeoff_selected_plan",
+        JSON.stringify({
+          plan: planId,
+          selectedAt: new Date().toISOString(),
+        }),
+      )
 
-    const limit = selectedCategory === "credit-line" ? selectedOption.creditLimit : selectedOption.loanAmount
+      // Analytics event
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        ;(window as any).gtag("event", "plan_selected", {
+          event_category: "conversion",
+          event_label: planId,
+          value: plans.find((p) => p.id === planId)?.price || 0,
+        })
+      }
 
-    // Check if user is authenticated
-    const authData = localStorage.getItem("takeoff_auth")
-    if (!authData) {
-      // Pass plan details to sign-in page via URL params
-      const params = new URLSearchParams({
-        plan: planName,
-        type: planType,
-        price: selectedOption.price,
-        limit: limit || "",
-      })
-      router.push(`/signin?${params.toString()}`)
-      return
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Redirect to personal info
+      router.push("/personal-info")
+    } catch (error) {
+      console.error("Error selecting plan:", error)
+    } finally {
+      setIsLoading(false)
     }
-
-    // If already authenticated, redirect to personal info page with plan details
-    const params = new URLSearchParams({
-      plan: planName,
-      type: planType,
-      price: selectedOption.price,
-      limit: limit || "",
-    })
-
-    router.push(`/personal-info?${params.toString()}`)
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading services...</p>
-        </div>
-      </div>
-    )
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push("/")
+    }
   }
-
-  const currentOptions = selectedCategory === "credit-line" ? creditLineOptions : securedLoanOptions
 
   return (
-    <div className="min-h-screen bg-black">
-      <Header showAuth={false} />
-
-      <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
-        {/* Welcome Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Welcome, {userData?.firstName}! Choose Your Credit Building Plan
-          </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Select the perfect credit building solution for your financial goals. All plans include tri-bureau reporting
-            and no hidden fees.
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-4 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </button>
+          <h1 className="text-4xl font-bold text-white mb-4">Choose Your Credit Building Plan</h1>
+          <p className="text-xl text-gray-300 mb-6">
+            Select the plan that best fits your credit building goals and budget
           </p>
         </div>
 
-        {/* Service Category Toggle */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-gray-900 border border-gray-700 rounded-full p-2 shadow-lg">
-            <div className="flex">
-              <button
-                onClick={() => setSelectedCategory("credit-line")}
-                className={`px-8 py-3 rounded-full font-medium transition-all ${
-                  selectedCategory === "credit-line"
-                    ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800"
-                }`}
-              >
-                <CreditCard className="h-5 w-5 inline mr-2" />
-                Credit Line Booster
-              </button>
-              <button
-                onClick={() => setSelectedCategory("secured-loan")}
-                className={`px-8 py-3 rounded-full font-medium transition-all ${
-                  selectedCategory === "secured-loan"
-                    ? "bg-sky-500 text-white shadow-md"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800"
-                }`}
-              >
-                <Shield className="h-5 w-5 inline mr-2" />
-                Secured Loan Booster
-              </button>
-            </div>
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex justify-between text-sm text-gray-400 mb-2">
+            <span>Step 1 of 3</span>
+            <span>33% Complete</span>
           </div>
+          <Progress value={33} className="h-2 bg-gray-800" />
         </div>
 
         {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {currentOptions.map((plan, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {plans.map((plan) => (
             <Card
-              key={index}
-              className="relative overflow-hidden bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300"
+              key={plan.id}
+              className={`relative bg-gray-900 border-gray-700 hover:border-sky-500 transition-all duration-300 ${
+                selectedPlan === plan.id ? "border-sky-500 ring-2 ring-sky-500/20" : ""
+              } ${plan.premium ? "border-yellow-500/50" : ""}`}
             >
-              <div className={`h-2 bg-gradient-to-r ${plan.gradient}`}></div>
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-sky-500 text-white px-3 py-1">Most Popular</Badge>
+                </div>
+              )}
+              {plan.premium && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-yellow-500 text-black px-3 py-1 font-semibold">Premium</Badge>
+                </div>
+              )}
 
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold text-white mb-1">
-                    {selectedCategory === "credit-line" ? plan.creditLimit : plan.loanAmount}
-                  </div>
-                  <div className="text-sm text-gray-400 mb-2">
-                    {selectedCategory === "credit-line" ? "Credit Line" : "Loan Amount"}
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="text-2xl font-bold text-sky-400">{plan.price}</span>
-                    <span className="text-gray-400">{plan.period}</span>
-                  </div>
+                <div className="flex justify-center mb-4">
+                  {plan.premium ? (
+                    <Star className="h-12 w-12 text-yellow-500" />
+                  ) : plan.popular ? (
+                    <Zap className="h-12 w-12 text-sky-500" />
+                  ) : (
+                    <Shield className="h-12 w-12 text-gray-400" />
+                  )}
                 </div>
-                <p className="text-gray-400 mt-3">{plan.description}</p>
+                <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
+                <div className="text-3xl font-bold text-sky-400 mb-2">
+                  ${plan.price}
+                  <span className="text-lg text-gray-400 font-normal">/month</span>
+                </div>
+                <div className="text-lg font-semibold text-yellow-400 mb-2">{plan.builderAmount}</div>
+                <CardDescription className="text-gray-300">{plan.description}</CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="h-5 w-5 text-sky-400 flex-shrink-0" />
-                      <span className="text-gray-300">{feature}</span>
+              <CardContent className="pt-0">
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-sky-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button
-                  onClick={() => handleSelectPlan(plan.name, selectedCategory)}
+                  onClick={() => handlePlanSelect(plan.id)}
                   disabled={isLoading}
-                  className={`w-full bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50 transform hover:scale-105`}
+                  className={`w-full py-3 text-lg font-semibold transition-all duration-300 ${
+                    plan.premium
+                      ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+                      : plan.popular
+                        ? "bg-sky-500 hover:bg-sky-600 text-white"
+                        : "bg-gray-700 hover:bg-gray-600 text-white"
+                  } ${selectedPlan === plan.id ? "ring-2 ring-offset-2 ring-offset-gray-900" : ""}`}
                 >
-                  {isLoading ? "Processing..." : plan.buttonText}
-                  {!isLoading && <ArrowRight className="h-4 w-4" />}
+                  {isLoading && selectedPlan === plan.id ? "Selecting..." : "Get Started"}
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Comparison Section */}
-        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-12">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Why Choose Take Off?</h2>
-
-          <div className="grid md:grid-cols-4 gap-8">
+        {/* Features Comparison */}
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <h3 className="text-2xl font-bold text-white mb-6 text-center">Why Choose Take Off?</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-sky-400" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2 text-white">Proven Results</h3>
-              <p className="text-gray-400">Average +84 point increase in first year</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-green-400" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2 text-white">Tri-Bureau Reporting</h3>
-              <p className="text-gray-400">Reports to Equifax, Experian & TransUnion</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-8 w-8 text-purple-400" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2 text-white">No Hidden Fees</h3>
-              <p className="text-gray-400">Transparent pricing with no surprises</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-orange-400" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2 text-white">Expert Support</h3>
-              <p className="text-gray-400">Dedicated credit building specialists</p>
-            </div>
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Frequently Asked Questions</h2>
-
-          <div className="space-y-6">
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2 text-white">
-                What's the difference between Credit Line and Secured Loan options?
-              </h3>
-              <p className="text-gray-400">
-                Credit Line Booster provides a revolving credit line that you can use and pay back repeatedly. Secured
-                Loan Booster is an installment loan with fixed monthly payments that helps build your payment history.
+              <TrendingUp className="h-12 w-12 text-sky-400 mx-auto mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Proven Results</h4>
+              <p className="text-gray-300 text-sm">
+                Our users see an average credit score increase of 100+ points within 6 months
               </p>
             </div>
-
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2 text-white">How quickly will I see results?</h3>
-              <p className="text-gray-400">
-                Most users see their first credit score update within 30-60 days. Significant improvements typically
-                occur within 3-6 months of consistent on-time payments.
+            <div className="text-center">
+              <Users className="h-12 w-12 text-sky-400 mx-auto mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Expert Support</h4>
+              <p className="text-gray-300 text-sm">
+                Get guidance from certified credit counselors and financial experts
               </p>
             </div>
-
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2 text-white">Can I switch plans later?</h3>
-              <p className="text-gray-400">
-                Yes! You can upgrade or downgrade your plan at any time. Changes will take effect on your next billing
-                cycle.
-              </p>
-            </div>
-
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-2 text-white">Is there a security deposit required?</h3>
-              <p className="text-gray-400">
-                For secured loan options, yes - the loan amount serves as your security deposit. For credit lines, no
-                deposit is required.
+            <div className="text-center">
+              <Award className="h-12 w-12 text-sky-400 mx-auto mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Industry Leading</h4>
+              <p className="text-gray-300 text-sm">
+                Trusted by over 100,000 users and rated #1 in customer satisfaction
               </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Take Off?</h2>
-          <p className="text-xl text-sky-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who have successfully built their credit with Take Off. Choose your plan above and
-            start your journey today!
+        {/* Security Notice */}
+        <div className="mt-8 p-4 bg-gray-900 border border-gray-700 rounded-lg">
+          <p className="text-gray-300 text-sm text-center">
+            🔒 Your information is encrypted and secure. We use bank-level security to protect your data.
           </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="secondary" size="lg" className="px-8">
-                View Dashboard
-              </Button>
-            </Link>
-            <Link href="/help">
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 bg-transparent border-white text-white hover:bg-white hover:text-sky-600 transition-colors"
-              >
-                Get Help
-              </Button>
-            </Link>
-          </div>
         </div>
-        {isLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-sm mx-4 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-              <h3 className="text-lg font-semibold mb-2 text-white">Processing Payment</h3>
-              <p className="text-gray-400">Please wait while we set up your plan...</p>
-            </div>
-          </div>
-        )}
-      </main>
+      </div>
     </div>
   )
 }

@@ -22,22 +22,16 @@ export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Get plan details from URL params if coming from services page
+  // Get plan details from URL params if coming from pricing page
   const planFromUrl = searchParams.get("plan")
-  const planType = searchParams.get("type")
-  const planPrice = searchParams.get("price")
-  const planLimit = searchParams.get("limit")
 
   const handleBack = () => {
     if (step === "verification") {
       setStep("email")
       setError("")
     } else {
-      if (window.history.length > 1) {
-        router.back()
-      } else {
-        router.push("/")
-      }
+      // Navigate back to the previous page or home
+      router.back()
     }
   }
 
@@ -88,15 +82,13 @@ export default function SignInPage() {
         }),
       )
 
-      // Store plan details if coming from services page
-      if (planFromUrl && planType && planPrice && planLimit) {
+      // Store selected plan if coming from pricing page
+      if (planFromUrl) {
         localStorage.setItem(
           "takeoff_selected_plan",
           JSON.stringify({
             plan: planFromUrl,
-            type: planType,
-            price: planPrice,
-            limit: planLimit,
+            selectedAt: new Date().toISOString(),
           }),
         )
       }
@@ -106,15 +98,14 @@ export default function SignInPage() {
         window.gtag("event", "signin_completed", {
           event_category: "authentication",
           event_label: "user_authenticated",
+          custom_parameters: {
+            has_selected_plan: !!planFromUrl,
+          },
         })
       }
 
-      // Redirect based on whether user has selected a plan
-      if (planFromUrl) {
-        router.push("/personal-info")
-      } else {
-        router.push("/services")
-      }
+      // Navigate to dashboard after successful verification
+      router.push("/dashboard")
     } catch (err) {
       setError("Invalid verification code. Please try again.")
     }
@@ -135,7 +126,7 @@ export default function SignInPage() {
           <div className="flex justify-start mb-4">
             <button
               onClick={handleBack}
-              className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors"
+              className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors p-2 rounded-md hover:bg-gray-800"
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="text-sm">Back</span>
@@ -146,12 +137,29 @@ export default function SignInPage() {
             {step === "email" ? "Welcome Back" : "Verify Your Email"}
           </CardTitle>
           <CardDescription className="text-center text-gray-400">
-            {step === "email" ? "Sign in to your Take Off account" : `We sent a verification code to ${email}`}
+            {step === "email" ? (
+              planFromUrl ? (
+                <>Sign in to continue with your selected plan</>
+              ) : (
+                <>Sign in to your Take Off account</>
+              )
+            ) : (
+              <>We sent a verification code to {email}</>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
             <div className="p-3 text-sm text-red-400 bg-red-900/20 border border-red-800 rounded-md">{error}</div>
+          )}
+
+          {/* Show selected plan info if coming from pricing */}
+          {planFromUrl && step === "email" && (
+            <div className="p-3 bg-sky-900/20 border border-sky-700 rounded-md">
+              <p className="text-sm text-sky-300 text-center">
+                Selected Plan: <span className="font-semibold capitalize">{planFromUrl} Boost</span>
+              </p>
+            </div>
           )}
 
           {step === "email" ? (
@@ -252,7 +260,7 @@ export default function SignInPage() {
                 className="w-full bg-sky-500 hover:bg-sky-600 text-white"
                 disabled={isLoading || verificationCode.length !== 6}
               >
-                {isLoading ? "Verifying..." : "Verify & Sign In"}
+                {isLoading ? "Verifying..." : "Verify & Continue"}
               </Button>
               <div className="text-center">
                 <button

@@ -29,6 +29,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
     localStorage.removeItem("takeoff_auth")
     localStorage.removeItem("takeoff_user")
     localStorage.removeItem("takeoff_selected_plan")
+    localStorage.removeItem("takeoff_payment_completed")
     setIsAuthenticated(false)
     setHasSelectedPlan(false)
     closeMenu()
