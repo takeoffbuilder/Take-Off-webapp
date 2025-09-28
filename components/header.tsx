@@ -204,7 +204,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
                       <p className="text-gray-400 mb-4">
                         Start building your credit today with no credit checks required.
                       </p>
-                      <Link href="/signin" onClick={closeMenu}>
+                      <Link href="/signup" onClick={closeMenu}>
                         <Button className="bg-sky-500 hover:bg-sky-600 text-white px-8 py-3 rounded-full transition-colors">
                           Get Started Now
                         </Button>
