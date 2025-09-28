@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import ScrollToTop from "@/components/scroll-to-top"
+import ClientRootLayout from "./clientLayout"
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -16,10 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <ScrollToTop />
-        {children}
-      </body>
+      <ClientRootLayout>{children}</ClientRootLayout>
     </html>
   )
 }

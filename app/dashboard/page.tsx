@@ -1,525 +1,423 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import Header from "@/components/header"
-import { useRouter } from "next/navigation"
-import { Calendar, CreditCard, TrendingUp, Bell, HelpCircle, Star, History, BookOpen } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import {
+  TrendingUp,
+  CreditCard,
+  Target,
+  Award,
+  CheckCircle,
+  Calendar,
+  DollarSign,
+  Rocket,
+  Star,
+  Zap,
+} from "lucide-react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import FooterNavigation from "@/components/footer-navigation"
 
-interface UserData {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  isVerified: boolean
-  signupDate: string
-}
-
-interface Subscription {
+interface SelectedBooster {
   id: string
-  planName: string
-  planType: string
-  originalPlanType?: string
-  price: string
-  billingFrequency: string
-  nextBillingDate: string
-  status: string
-  activatedAt: string
-  creditLimit?: string
-  loanAmount?: string
-  features: string[]
+  plan: {
+    id: string
+    name: string
+    price: number
+    builderAmount: string
+    features: string[]
+  }
+  backdatedHistory: boolean
 }
 
-export default function DashboardPage() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const [allSubscriptions, setAllSubscriptions] = useState<Subscription[]>([])
+export default function Dashboard() {
+  const [selectedBoosters, setSelectedBoosters] = useState<SelectedBooster[]>([])
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
 
   useEffect(() => {
-    // Check if user is authenticated
-    const authData = localStorage.getItem("takeoff_auth")
-    const storedUser = localStorage.getItem("takeoff_user")
-
-    if (!authData) {
-      router.push("/signin")
-      return
+    // Check for payment success
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get("payment") === "success") {
+      setPaymentSuccess(true)
+      // Remove the parameter from URL
+      window.history.replaceState({}, "", "/dashboard")
     }
 
-    if (storedUser) {
-      setUserData(JSON.parse(storedUser))
-    }
-
-    // Load all plans and create unified subscription list
-    const loadAllPlans = () => {
-      let allPlans: Subscription[] = []
-
-      // Load main plan
-      const mainPlanData = localStorage.getItem("takeoff_selected_plan")
-      if (mainPlanData) {
-        const mainPlan = JSON.parse(mainPlanData)
-        const mainPlanSubscription: Subscription = {
-          id: "main-plan",
-          planName: mainPlan.planName,
-          planType: "main-plan",
-          originalPlanType: mainPlan.planType,
-          price: "$25.00", // Default main plan price
-          billingFrequency: "monthly",
-          nextBillingDate: mainPlan.nextBillingDate,
-          status: mainPlan.paymentStatus || "active",
-          activatedAt: mainPlan.selectedAt,
-          features: [
-            "Credit monitoring",
-            "Monthly credit reports",
-            "Payment reminders",
-            "Credit building tips",
-            "Account management",
-          ],
+    // Load selected boosters from localStorage
+    const storedBoosters = localStorage.getItem("takeoff_selected_boosters")
+    if (storedBoosters) {
+      try {
+        setSelectedBoosters(JSON.parse(storedBoosters))
+      } catch (error) {
+        console.error("Error parsing stored boosters:", error)
+      }
+    } else {
+      // If no boosters in storage, create a default one based on selected plan
+      const selectedPlan = localStorage.getItem("takeoff_selected_plan")
+      if (selectedPlan) {
+        const planData = JSON.parse(selectedPlan)
+        const defaultBooster: SelectedBooster = {
+          id: "default-1",
+          plan: {
+            id: planData.id || "starter",
+            name: planData.name || "Starter Boost",
+            price: planData.price || 15,
+            builderAmount: planData.builderAmount || "$1500",
+            features: planData.features || ["$1500 Builder Account", "Credit monitoring", "Monthly reports"],
+          },
+          backdatedHistory: false,
         }
-        allPlans.push(mainPlanSubscription)
-      }
-
-      // Load boost plans
-      const subscriptionsData = localStorage.getItem("takeoff_subscriptions")
-      if (subscriptionsData) {
-        const boostPlans = JSON.parse(subscriptionsData).filter(
-          (sub: Subscription) => sub.status === "active" && sub.planType !== "main-plan",
-        )
-        allPlans = [...allPlans, ...boostPlans]
-      }
-
-      setAllSubscriptions(allPlans)
-    }
-
-    loadAllPlans()
-
-    // Listen for storage changes to update in real-time
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "takeoff_subscriptions" || e.key === "takeoff_selected_plan") {
-        loadAllPlans()
+        setSelectedBoosters([defaultBooster])
       }
     }
+  }, [])
 
-    window.addEventListener("storage", handleStorageChange)
-    setIsLoading(false)
+  const calculateTotalMonthly = () => {
+    return selectedBoosters.reduce((total, booster) => {
+      let boosterTotal = booster.plan.price
+      if (booster.backdatedHistory) {
+        boosterTotal += 50
+      }
+      return total + boosterTotal
+    }, 0)
+  }
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange)
-    }
-  }, [router])
+  const getTotalBuilderAmount = () => {
+    return selectedBoosters.reduce((total, booster) => {
+      const amount = Number.parseInt(booster.plan.builderAmount.replace(/[$,]/g, ""))
+      return total + amount
+    }, 0)
+  }
 
-  // Separate main plan and boost plans
-  const mainPlan = allSubscriptions.find((sub) => sub.planType === "main-plan")
-  const boostPlans = allSubscriptions.filter((sub) => sub.planType !== "main-plan")
+  const getPlanIcon = (planName: string) => {
+    if (planName.toLowerCase().includes("starter")) return <Rocket className="h-5 w-5" />
+    if (planName.toLowerCase().includes("power")) return <Zap className="h-5 w-5" />
+    if (planName.toLowerCase().includes("max")) return <Star className="h-5 w-5" />
+    if (planName.toLowerCase().includes("blaster")) return <Target className="h-5 w-5" />
+    if (planName.toLowerCase().includes("super")) return <Award className="h-5 w-5" />
+    if (planName.toLowerCase().includes("star")) return <Star className="h-5 w-5" />
+    return <CreditCard className="h-5 w-5" />
+  }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
+  const getPlanColor = (planName: string) => {
+    if (planName.toLowerCase().includes("starter")) return "text-blue-400"
+    if (planName.toLowerCase().includes("power")) return "text-purple-400"
+    if (planName.toLowerCase().includes("max")) return "text-green-400"
+    if (planName.toLowerCase().includes("blaster")) return "text-orange-400"
+    if (planName.toLowerCase().includes("super")) return "text-red-400"
+    if (planName.toLowerCase().includes("star")) return "text-yellow-400"
+    return "text-sky-400"
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <Header showAuth={false} />
-
-      <main className="max-w-7xl mx-auto px-4 py-8 pt-24">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {userData?.firstName || "User"}!</h1>
-            <p className="text-gray-600">Here's your credit building progress</p>
+    <div className="min-h-screen bg-black text-white pb-20">
+      <div className="container mx-auto px-4 py-8">
+        {/* Success Message */}
+        {paymentSuccess && (
+          <div className="mb-6 p-4 bg-green-900/20 border border-green-700/30 rounded-lg">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-400" />
+              <span className="font-medium text-green-300">Payment Successful!</span>
+            </div>
+            <p className="text-green-200 text-sm mt-1">
+              Your booster plans are now active and building your credit history.
+            </p>
           </div>
+        )}
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-300">Track your credit building progress</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Credit Score Overview */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-sky-500" />
-                  Credit Score Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <div className="text-4xl font-bold text-sky-500 mb-1">675</div>
-                    <div className="text-sm text-sky-500 font-medium">+12 points this month</div>
-                    <div className="text-xs text-gray-500">Last updated today</div>
-                  </div>
-                  <div className="relative w-32 h-32">
-                    <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                      <circle cx="60" cy="60" r="50" stroke="#e5e7eb" strokeWidth="8" fill="none" />
-                      <circle
-                        cx="60"
-                        cy="60"
-                        r="50"
-                        stroke="#0ea5e9"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${(675 / 850) * 314} 314`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold">675</div>
-                        <div className="text-xs text-gray-500">Good</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Credit Score History Chart */}
-                <div className="bg-sky-50 rounded-lg p-4">
-                  <div className="h-32 relative">
-                    <svg className="w-full h-full" viewBox="0 0 400 120">
-                      <path
-                        d="M 20 80 Q 80 75 140 70 Q 200 65 260 60 Q 320 55 380 50"
-                        stroke="#0ea5e9"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <circle cx="380" cy="50" r="4" fill="#0ea5e9" />
-                    </svg>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-500 mt-2">
-                    <span>Jan</span>
-                    <span>Feb</span>
-                    <span>Mar</span>
-                    <span>Apr</span>
-                    <span>May</span>
-                    <span>Jun</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Payment Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-sky-500" />
-                  Payment Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div>
-                      <div className="font-medium text-green-800">Last Payment</div>
-                      <div className="text-sm text-green-600">$25.00 - June 15, 2024</div>
-                    </div>
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-sky-50 rounded-lg border border-sky-200">
-                    <div>
-                      <div className="font-medium text-sky-800">Next Payment</div>
-                      <div className="text-sm text-sky-600">$25.00 - July 15, 2024</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Account Progress */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Account Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Credit Building Journey</span>
-                      <span>75%</span>
-                    </div>
-                    <Progress value={75} className="h-2" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900">6</div>
-                      <div className="text-sm text-gray-600">Months Active</div>
-                    </div>
-                    <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900">100%</div>
-                      <div className="text-sm text-gray-600">On-Time Payments</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* User Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Account Info</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div>
-                    <div className="text-sm text-gray-500">Name</div>
-                    <div className="font-medium">
-                      {userData?.firstName} {userData?.lastName}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">Email</div>
-                    <div className="font-medium">{userData?.email}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">Status</div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm font-medium text-green-600">Verified</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Current Plans */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Current Plans</CardTitle>
-                  <Link href="/my-plans">
-                    <Button variant="outline" size="sm" className="text-xs bg-transparent">
-                      View All
-                    </Button>
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Main Plan */}
-                  {mainPlan && (
-                    <div className="p-4 bg-sky-50 rounded-lg border border-sky-200">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="font-semibold text-sky-800">{mainPlan.planName}</div>
-                        <div className="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full font-medium">
-                          Main Plan
+        {/* Active Booster Plans Detail Section */}
+        {selectedBoosters.length > 0 && (
+          <Card className="bg-gray-900 border-gray-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-sky-400" />
+                Your Active Booster Plans
+                <Badge variant="secondary" className="bg-sky-900 text-sky-300 ml-2">
+                  {selectedBoosters.length} Active
+                </Badge>
+              </CardTitle>
+              <p className="text-gray-400 text-sm">
+                Credit building plans selected during signup and currently building your credit history
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 mb-6">
+                {selectedBoosters.map((booster, index) => (
+                  <div key={booster.id} className="border border-gray-600 rounded-lg p-6 bg-gray-800/50">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 bg-gray-700 rounded-lg ${getPlanColor(booster.plan.name)}`}>
+                          {getPlanIcon(booster.plan.name)}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-white text-lg">{booster.plan.name}</h3>
+                          <p className="text-gray-400 text-sm">Plan #{index + 1}</p>
                         </div>
                       </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Type:</span>
-                          <span className="font-medium capitalize">
-                            {mainPlan.originalPlanType?.replace("-", " ") || "Credit Line"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Status:</span>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                            <span className="text-green-600 capitalize font-medium">{mainPlan.status}</span>
+                      <div className="text-right">
+                        <Badge variant="secondary" className="bg-green-900 text-green-300 mb-2">
+                          Active
+                        </Badge>
+                        <p className="text-xs text-gray-400">Since signup</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Plan Details */}
+                      <div>
+                        <h4 className="font-medium text-white mb-3">Plan Details</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Builder Account</span>
+                            <span className={`font-semibold ${getPlanColor(booster.plan.name)}`}>
+                              {booster.plan.builderAmount}
+                            </span>
                           </div>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Next Billing:</span>
-                          <span className="font-medium">{new Date(mainPlan.nextBillingDate).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Activated:</span>
-                          <span className="font-medium">{new Date(mainPlan.activatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-sky-200">
-                        <Link href="/payment">
-                          <Button
-                            size="sm"
-                            className="bg-sky-500 hover:bg-sky-600 text-xs px-3 py-1 h-7 transition-colors"
-                          >
-                            Pay Now - $25.00
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Additional Booster Plans */}
-                  {boostPlans.length > 0 && (
-                    <div className="space-y-3">
-                      <div className="text-sm font-semibold text-gray-700 flex items-center gap-2 border-t pt-3">
-                        <Star className="h-4 w-4 text-yellow-500" />
-                        Additional Booster Plans ({boostPlans.length})
-                      </div>
-                      {boostPlans.map((boost, index) => (
-                        <div key={boost.id} className="p-4 bg-green-50 rounded-lg border border-green-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="font-semibold text-green-800">{boost.planName}</div>
-                            <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                              {boost.price}/month
-                            </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Monthly Payment</span>
+                            <span className="text-white">${booster.plan.price}</span>
                           </div>
-                          <div className="space-y-2 text-sm">
+                          {booster.backdatedHistory && (
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Type:</span>
-                              <span className="font-medium capitalize">{boost.planType.replace("-", " ")}</span>
+                              <span className="text-gray-400">2-Year Backdated History</span>
+                              <span className="text-white">+$50</span>
                             </div>
-                            {boost.creditLimit && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Credit Limit:</span>
-                                <span className="font-medium text-green-700">{boost.creditLimit}</span>
-                              </div>
-                            )}
-                            {boost.loanAmount && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Loan Amount:</span>
-                                <span className="font-medium text-green-700">{boost.loanAmount}</span>
-                              </div>
-                            )}
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Status:</span>
-                              <div className="flex items-center gap-1">
-                                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                                <span className="text-green-600 capitalize font-medium">{boost.status}</span>
-                              </div>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Activated:</span>
-                              <span className="font-medium">{new Date(boost.activatedAt).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                          <div className="mt-4 pt-3 border-t border-green-200">
-                            <Link href="/payment">
-                              <Button
-                                size="sm"
-                                className="bg-green-500 hover:bg-green-600 text-xs px-3 py-1 h-7 transition-colors"
-                              >
-                                Pay Now - {boost.price}
-                              </Button>
-                            </Link>
+                          )}
+                          <div className="flex justify-between font-medium border-t border-gray-700 pt-2 mt-2">
+                            <span className="text-gray-300">Total Monthly</span>
+                            <span className="text-white">
+                              ${booster.plan.price + (booster.backdatedHistory ? 50 : 0)}/mo
+                            </span>
                           </div>
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Plan Features */}
+                      <div>
+                        <h4 className="font-medium text-white mb-3">Included Features</h4>
+                        <div className="space-y-2">
+                          {booster.plan.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex items-center gap-2">
+                              <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
+                              <span className="text-gray-300 text-sm">{feature}</span>
+                            </div>
+                          ))}
+                          {booster.backdatedHistory && (
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
+                              <span className="text-gray-300 text-sm">2-year backdated credit history</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  )}
+
+                    {/* Payment Info */}
+                    <div className="mt-4 pt-4 border-t border-gray-700">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Next payment due:</span>
+                        <span className="text-white">January 15, 2025</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Summary Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-800 rounded-lg">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-sky-400">${getTotalBuilderAmount().toLocaleString()}</div>
+                  <div className="text-sm text-gray-400">Total Builder Amount</div>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">${calculateTotalMonthly()}</div>
+                  <div className="text-sm text-gray-400">Monthly Payment</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-400">{selectedBoosters.length}</div>
+                  <div className="text-sm text-gray-400">Active Plans</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400">
+                    {selectedBoosters.filter((b) => b.backdatedHistory).length}
+                  </div>
+                  <div className="text-sm text-gray-400">Backdated Plans</div>
+                </div>
+              </div>
 
-            {/* Add a Boost Prompt */}
-            <Card className="bg-gradient-to-br from-sky-500 to-sky-600 text-white">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2">Upgrade or Add Another Boost to Your Credit!</h3>
-                <p className="text-sm text-sky-100 mb-4">
-                  Accelerate your credit building with additional services and faster results
-                </p>
-                <Link href="/add-boost">
-                  <Button variant="secondary" size="sm" className="w-full hover:bg-gray-100 transition-colors">
-                    Add a Boost
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Link href="/my-courses">
+              {/* Quick Actions */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href="/plans">
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                    size="sm"
+                    className="border-sky-600 text-sky-400 hover:bg-sky-900/20 bg-transparent"
                   >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    My Courses
-                  </Button>
-                </Link>
-                <Link href="/transactions">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    View Transactions
+                    Add Another Plan
                   </Button>
                 </Link>
                 <Link href="/payment-history">
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                    size="sm"
+                    className="border-gray-600 text-gray-300 hover:bg-gray-800 bg-transparent"
                   >
-                    <History className="h-4 w-4 mr-2" />
-                    Payment History
+                    View Payment History
                   </Button>
                 </Link>
-                <Link href="/support">
+                <Link href="/settings">
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors"
+                    size="sm"
+                    className="border-gray-600 text-gray-300 hover:bg-gray-800 bg-transparent"
                   >
-                    <HelpCircle className="h-4 w-4 mr-2" />
-                    Support
+                    Manage Plans
                   </Button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-            {/* Notifications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-sky-500 rounded-full mt-2"></div>
-                    <div>
-                      <div className="text-sm font-medium">Credit score updated</div>
-                      <div className="text-xs text-gray-500">2 hours ago</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <div className="text-sm font-medium">Payment processed</div>
-                      <div className="text-xs text-gray-500">1 day ago</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                    <div>
-                      <div className="text-sm font-medium">Account verified</div>
-                      <div className="text-xs text-gray-500">3 days ago</div>
-                    </div>
-                  </div>
+        {/* Credit Score Overview */}
+        <Card className="bg-gray-900 border-gray-700 mb-6">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-sky-400" />
+              Credit Score Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-3xl font-bold text-sky-400">720</div>
+                <div className="text-sm text-gray-400">Current Score</div>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-semibold text-green-400">+45</div>
+                <div className="text-sm text-gray-400">This Month</div>
+              </div>
+            </div>
+            <Progress value={72} className="h-2 bg-gray-800" />
+            <div className="flex justify-between text-sm text-gray-400 mt-2">
+              <span>Poor</span>
+              <span>Fair</span>
+              <span>Good</span>
+              <span>Excellent</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card className="bg-gray-900 border-gray-700">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-sky-400/20 rounded-lg">
+                  <CreditCard className="h-5 w-5 text-sky-400" />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">
+                    ${getTotalBuilderAmount() > 0 ? getTotalBuilderAmount().toLocaleString() : "2,500"}
+                  </div>
+                  <div className="text-sm text-gray-400">Total Credit Limit</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-700">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-400/20 rounded-lg">
+                  <Target className="h-5 w-5 text-green-400" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">15%</div>
+                  <div className="text-sm text-gray-400">Utilization</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-700">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-400/20 rounded-lg">
+                  <Award className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">98%</div>
+                  <div className="text-sm text-gray-400">On-time Payments</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
-      <FooterNavigation />
+
+        {/* Recent Activity */}
+        <Card className="bg-gray-900 border-gray-700 mb-6">
+          <CardHeader>
+            <CardTitle className="text-white">Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {paymentSuccess && (
+                <div className="flex items-center justify-between py-2 border-b border-gray-800">
+                  <div>
+                    <div className="text-white font-medium">Booster Plans Activated</div>
+                    <div className="text-sm text-gray-400">
+                      {selectedBoosters.length} plan{selectedBoosters.length > 1 ? "s" : ""} activated successfully
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-400">Just now</div>
+                </div>
+              )}
+              <div className="flex items-center justify-between py-2 border-b border-gray-800">
+                <div>
+                  <div className="text-white font-medium">Payment Processed</div>
+                  <div className="text-sm text-gray-400">Credit card payment of $150</div>
+                </div>
+                <div className="text-sm text-gray-400">2 days ago</div>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-800">
+                <div>
+                  <div className="text-white font-medium">Credit Score Updated</div>
+                  <div className="text-sm text-gray-400">Score increased by 5 points</div>
+                </div>
+                <div className="text-sm text-gray-400">1 week ago</div>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <div className="text-white font-medium">Account Opened</div>
+                  <div className="text-sm text-gray-400">New credit builder account</div>
+                </div>
+                <div className="text-sm text-gray-400">2 weeks ago</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link href="/payment">
+            <Button className="bg-sky-600 hover:bg-sky-700 text-white h-12 w-full">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Make a Payment
+            </Button>
+          </Link>
+          <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 h-12 bg-transparent">
+            <Calendar className="h-4 w-4 mr-2" />
+            View Credit Report
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

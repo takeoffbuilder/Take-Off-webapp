@@ -1,61 +1,82 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Header from "@/components/header"
-import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Shield, Lock, CheckCircle } from "lucide-react"
-import Link from "next/link"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Progress } from "@/components/ui/progress"
+import { ArrowLeft, User, Phone, Mail, Calendar, MapPin, AlertCircle } from "lucide-react"
 
 interface PersonalInfo {
   firstName: string
   lastName: string
-  ssn: string
-  dateOfBirth: string
-  phoneNumber: string
-  address: {
-    street: string
-    aptUnit: string
-    city: string
-    state: string
-    zipCode: string
+  email: string
+  phone: string
+  dateOfBirth: {
+    month: string
+    day: string
+    year: string
   }
-}
-
-interface SelectedPlan {
-  planName: string
-  planType: string
-  price: string
-  creditLimit?: string
-  loanAmount?: string
+  address: string
+  city: string
+  state: string
+  zipCode: string
+  ssn: string
 }
 
 export default function PersonalInfoPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null)
-  const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 1
-
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: "",
     lastName: "",
-    ssn: "",
-    dateOfBirth: "",
-    phoneNumber: "",
-    address: {
-      street: "",
-      aptUnit: "",
-      city: "",
-      state: "",
-      zipCode: "",
+    email: "",
+    phone: "",
+    dateOfBirth: {
+      month: "",
+      day: "",
+      year: "",
     },
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    ssn: "",
+  })
+
+  // Generate arrays for dropdowns
+  const months = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ]
+
+  const days = Array.from({ length: 31 }, (_, i) => {
+    const day = (i + 1).toString().padStart(2, "0")
+    return { value: day, label: day }
+  })
+
+  const currentYear = new Date().getFullYear()
+  const years = Array.from({ length: 100 }, (_, i) => {
+    const year = (currentYear - i).toString()
+    return { value: year, label: year }
   })
 
   const states = [
@@ -112,60 +133,110 @@ export default function PersonalInfoPage() {
   ]
 
   useEffect(() => {
-    // Check if user is authenticated
-    const authData = localStorage.getItem("takeoff_auth")
-    if (!authData) {
-      router.push("/signin")
-      return
-    }
-
-    // Fetch query params once
-    const sp = new URLSearchParams(window.location.search)
-    const planFromUrl = sp.get("plan")
-    const typeFromUrl = sp.get("type")
-    const priceFromUrl = sp.get("price")
-    const limitFromUrl = sp.get("limit")
-
-    if (planFromUrl && typeFromUrl && priceFromUrl) {
-      setSelectedPlan({
-        planName: planFromUrl,
-        planType: typeFromUrl,
-        price: priceFromUrl,
-        creditLimit: typeFromUrl === "credit-line" ? limitFromUrl : undefined,
-        loanAmount: typeFromUrl === "secured-loan" ? limitFromUrl : undefined,
-      })
-    } else {
-      router.push("/services")
-    }
-
+    // Check if user came from signup or has selected plan
+    const signupData = localStorage.getItem("takeoff_signup")
+    const selectedPlanData = localStorage.getItem("takeoff_selected_plan")
     const userData = localStorage.getItem("takeoff_user")
-    if (userData) {
-      const user = JSON.parse(userData)
+
+    if (signupData) {
+      const data = JSON.parse(signupData)
       setPersonalInfo((prev) => ({
         ...prev,
-        firstName: user.firstName === "User" ? "" : user.firstName || "",
-        lastName: user.lastName || "",
-        phoneNumber: user.phone || "",
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        email: data.email || "",
       }))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (userData) {
+      const data = JSON.parse(userData)
+      setPersonalInfo((prev) => ({
+        ...prev,
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        email: data.email || "",
+      }))
+    }
+
+    if (selectedPlanData) {
+      const planData = JSON.parse(selectedPlanData)
+      setSelectedPlan(planData.plan)
+    }
   }, [])
 
-  const handleInputChange = (field: string, value: string, section?: string) => {
-    if (section) {
-      setPersonalInfo((prev) => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof PersonalInfo],
-          [field]: value,
-        },
-      }))
-    } else {
-      setPersonalInfo((prev) => ({
-        ...prev,
-        [field]: value,
-      }))
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+
+    if (!personalInfo.firstName.trim()) {
+      newErrors.firstName = "First name is required"
     }
+
+    if (!personalInfo.lastName.trim()) {
+      newErrors.lastName = "Last name is required"
+    }
+
+    if (!personalInfo.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(personalInfo.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!personalInfo.phone.trim()) {
+      newErrors.phone = "Phone number is required"
+    } else {
+      // Extract only digits from phone number
+      const phoneDigits = personalInfo.phone.replace(/\D/g, "")
+      // Accept 7 digits as valid (local number) or 10 digits (full number)
+      if (phoneDigits.length !== 7 && phoneDigits.length !== 10) {
+        newErrors.phone = "Please enter a valid phone number (7 or 10 digits)"
+      }
+    }
+
+    if (!personalInfo.dateOfBirth.month || !personalInfo.dateOfBirth.day || !personalInfo.dateOfBirth.year) {
+      newErrors.dateOfBirth = "Date of birth is required"
+    }
+
+    if (!personalInfo.address.trim()) {
+      newErrors.address = "Address is required"
+    }
+
+    if (!personalInfo.city.trim()) {
+      newErrors.city = "City is required"
+    }
+
+    if (!personalInfo.state.trim()) {
+      newErrors.state = "State is required"
+    }
+
+    if (!personalInfo.zipCode.trim()) {
+      newErrors.zipCode = "ZIP code is required"
+    } else if (!/^\d{5}(-\d{4})?$/.test(personalInfo.zipCode)) {
+      newErrors.zipCode = "Please enter a valid ZIP code"
+    }
+
+    if (!personalInfo.ssn.trim()) {
+      newErrors.ssn = "SSN is required"
+    } else if (!/^\d{3}-\d{2}-\d{4}$/.test(personalInfo.ssn)) {
+      newErrors.ssn = "Please enter a valid SSN (XXX-XX-XXXX)"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, "")
+
+    // Handle 7-digit numbers (local format)
+    if (numbers.length <= 7) {
+      if (numbers.length <= 3) return numbers
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+    }
+
+    // Handle 10-digit numbers (full format with area code)
+    if (numbers.length <= 3) return numbers
+    if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`
   }
 
   const formatSSN = (value: string) => {
@@ -175,479 +246,436 @@ export default function PersonalInfoPage() {
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 9)}`
   }
 
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, "")
-    if (numbers.length <= 3) return numbers
-    if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`
-    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`
-  }
+  const handleInputChange = (field: keyof PersonalInfo, value: string) => {
+    if (field === "phone") {
+      value = formatPhone(value)
+    } else if (field === "ssn") {
+      value = formatSSN(value)
+    }
 
-  const validateStep = (step: number) => {
-    switch (step) {
-      case 1:
-        return (
-          personalInfo.firstName &&
-          personalInfo.lastName &&
-          personalInfo.ssn &&
-          personalInfo.dateOfBirth &&
-          personalInfo.phoneNumber &&
-          personalInfo.address.street &&
-          personalInfo.address.city &&
-          personalInfo.address.state &&
-          personalInfo.address.zipCode
-        )
-      default:
-        return false
+    setPersonalInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }))
     }
   }
 
-  const handleSubmit = async () => {
-    if (!validateStep(currentStep)) {
-      setError("Please fill in all required fields")
+  const handleDateChange = (field: "month" | "day" | "year", value: string) => {
+    setPersonalInfo((prev) => ({
+      ...prev,
+      dateOfBirth: {
+        ...prev.dateOfBirth,
+        [field]: value,
+      },
+    }))
+
+    // Clear date error when user selects any date field
+    if (errors.dateOfBirth) {
+      setErrors((prev) => ({
+        ...prev,
+        dateOfBirth: "",
+      }))
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
       return
     }
 
     setIsLoading(true)
-    setError("")
 
     try {
-      // Simulate API call for identity verification and processing
-      await new Promise((resolve) => setTimeout(resolve, 3000))
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Store personal information
-      localStorage.setItem("takeoff_personal_info", JSON.stringify(personalInfo))
+      // Store user data
+      localStorage.setItem("takeoff_user", JSON.stringify(personalInfo))
+      localStorage.setItem("takeoff_auth", "true")
 
-      // Store selected plan with personal info completion
-      if (selectedPlan) {
-        localStorage.setItem(
-          "takeoff_selected_plan",
-          JSON.stringify({
-            ...selectedPlan,
-            selectedAt: new Date().toISOString(),
-            paymentStatus: "pending",
-            personalInfoCompleted: true,
-            nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          }),
-        )
+      // Track analytics
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        ;(window as any).gtag("event", "personal_info_completed", {
+          event_category: "signup",
+          event_label: "personal_info_form",
+          custom_parameters: {
+            selected_plan: selectedPlan,
+          },
+        })
       }
 
-      // Update user data
-      const existingUser = localStorage.getItem("takeoff_user")
-      if (existingUser) {
-        const userData = JSON.parse(existingUser)
-        localStorage.setItem(
-          "takeoff_user",
-          JSON.stringify({
-            ...userData,
-            firstName: personalInfo.firstName,
-            lastName: personalInfo.lastName,
-            phone: personalInfo.phoneNumber,
-            personalInfoCompleted: true,
-          }),
-        )
-      }
-
-      console.log("Personal information submitted:", personalInfo)
-
-      // Redirect to payment/confirmation page
-      router.push("/payment-confirmation")
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
+      // Always redirect directly to payment page since plan is already selected
+      router.push("/payment")
+    } catch (error) {
+      console.error("Error submitting personal info:", error)
+      setErrors({ submit: "Something went wrong. Please try again." })
+    } finally {
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
-  if (!selectedPlan) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push("/")
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header showAuth={false} />
-
-      <main className="max-w-4xl mx-auto px-4 py-8 pt-24">
-        {/* Back Button */}
-        <Link href="/services" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Plans
-        </Link>
-
-        {/* Progress Bar */}
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Complete Your Application</h1>
-            <span className="text-sm text-gray-500">
-              Step {currentStep} of {totalSteps}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-sky-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            ></div>
-          </div>
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-4 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </button>
+          <h1 className="text-3xl font-bold text-white mb-2">Personal Information</h1>
+          <p className="text-gray-300">We need some basic information to get you started</p>
+
+          {/* Show selected plan */}
+          {selectedPlan && (
+            <div className="mt-4 p-3 bg-sky-900/20 border border-sky-700 rounded-lg">
+              <p className="text-sm text-sky-300">
+                Selected Plan: <span className="font-semibold capitalize">{selectedPlan} Boost</span>
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Form */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lock className="h-5 w-5 text-sky-500" />
-                  Complete Personal Information
-                </CardTitle>
-                <p className="text-gray-600">
-                  Please provide all your information to set up your credit building account.
-                </p>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {/* Step 1: Complete Personal Information */}
-                {currentStep === 1 && (
-                  <>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="firstName" className="text-gray-900">
-                          First Name *
-                        </Label>
-                        <Input
-                          id="firstName"
-                          value={personalInfo.firstName}
-                          onChange={(e) => handleInputChange("firstName", e.target.value)}
-                          placeholder="First Name"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="lastName" className="text-gray-900">
-                          Last Name *
-                        </Label>
-                        <Input
-                          id="lastName"
-                          value={personalInfo.lastName}
-                          onChange={(e) => handleInputChange("lastName", e.target.value)}
-                          placeholder="Last Name"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="ssn" className="text-gray-900">
-                        Social Security Number *
-                      </Label>
-                      <Input
-                        id="ssn"
-                        value={personalInfo.ssn}
-                        onChange={(e) => handleInputChange("ssn", formatSSN(e.target.value))}
-                        placeholder="XXX-XX-XXXX"
-                        maxLength={11}
-                        required
-                      />
-                      <p className="text-xs text-gray-500 mt-1">We use bank-level encryption to protect your SSN</p>
-                    </div>
-
-                    {/* Date of Birth Wheels */}
-                    <div>
-                      <Label className="text-gray-900">Date of Birth *</Label>
-                      <div className="grid grid-cols-3 gap-4 mt-2">
-                        {/* Month Wheel */}
-                        <div>
-                          <Label htmlFor="birthMonth" className="text-sm text-gray-600">
-                            Month
-                          </Label>
-                          <Select
-                            value={personalInfo.dateOfBirth.split("-")[1] || ""}
-                            onValueChange={(value) => {
-                              const currentDate = personalInfo.dateOfBirth.split("-")
-                              const year = currentDate[0] || new Date().getFullYear().toString()
-                              const day = currentDate[2] || "01"
-                              handleInputChange("dateOfBirth", `${year}-${value.padStart(2, "0")}-${day}`)
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Month" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60">
-                              <SelectItem value="01">January</SelectItem>
-                              <SelectItem value="02">February</SelectItem>
-                              <SelectItem value="03">March</SelectItem>
-                              <SelectItem value="04">April</SelectItem>
-                              <SelectItem value="05">May</SelectItem>
-                              <SelectItem value="06">June</SelectItem>
-                              <SelectItem value="07">July</SelectItem>
-                              <SelectItem value="08">August</SelectItem>
-                              <SelectItem value="09">September</SelectItem>
-                              <SelectItem value="10">October</SelectItem>
-                              <SelectItem value="11">November</SelectItem>
-                              <SelectItem value="12">December</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {/* Day Wheel */}
-                        <div>
-                          <Label htmlFor="birthDay" className="text-sm text-gray-600">
-                            Day
-                          </Label>
-                          <Select
-                            value={personalInfo.dateOfBirth.split("-")[2] || ""}
-                            onValueChange={(value) => {
-                              const currentDate = personalInfo.dateOfBirth.split("-")
-                              const year = currentDate[0] || new Date().getFullYear().toString()
-                              const month = currentDate[1] || "01"
-                              handleInputChange("dateOfBirth", `${year}-${month}-${value.padStart(2, "0")}`)
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Day" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60">
-                              {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                                <SelectItem key={day} value={day.toString().padStart(2, "0")}>
-                                  {day}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {/* Year Wheel */}
-                        <div>
-                          <Label htmlFor="birthYear" className="text-sm text-gray-600">
-                            Year
-                          </Label>
-                          <Select
-                            value={personalInfo.dateOfBirth.split("-")[0] || ""}
-                            onValueChange={(value) => {
-                              const currentDate = personalInfo.dateOfBirth.split("-")
-                              const month = currentDate[1] || "01"
-                              const day = currentDate[2] || "01"
-                              handleInputChange("dateOfBirth", `${value}-${month}-${day}`)
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Year" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60">
-                              {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i).map((year) => (
-                                <SelectItem key={year} value={year.toString()}>
-                                  {year}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">You must be 18 or older to apply</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="phoneNumber" className="text-gray-900">
-                          Phone Number *
-                        </Label>
-                        <Input
-                          id="phoneNumber"
-                          value={personalInfo.phoneNumber}
-                          onChange={(e) => handleInputChange("phoneNumber", formatPhone(e.target.value))}
-                          placeholder="(XXX) XXX-XXXX"
-                          maxLength={14}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="street" className="text-gray-900">
-                        Street Address *
-                      </Label>
-                      <Input
-                        id="street"
-                        value={personalInfo.address.street}
-                        onChange={(e) => handleInputChange("street", e.target.value, "address")}
-                        placeholder="Enter your street address"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="aptUnit" className="text-gray-900">
-                        Apt/Unit# (Optional)
-                      </Label>
-                      <Input
-                        id="aptUnit"
-                        value={personalInfo.address.aptUnit}
-                        onChange={(e) => handleInputChange("aptUnit", e.target.value, "address")}
-                        placeholder="Apartment, suite, unit, building, floor, etc."
-                      />
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="city" className="text-gray-900">
-                          City *
-                        </Label>
-                        <Input
-                          id="city"
-                          value={personalInfo.address.city}
-                          onChange={(e) => handleInputChange("city", e.target.value, "address")}
-                          placeholder="City"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="state" className="text-gray-900">
-                          State *
-                        </Label>
-                        <Select
-                          value={personalInfo.address.state}
-                          onValueChange={(value) => handleInputChange("state", value, "address")}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select state" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {states.map((state) => (
-                              <SelectItem key={state} value={state}>
-                                {state}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="zipCode" className="text-gray-900">
-                          ZIP Code *
-                        </Label>
-                        <Input
-                          id="zipCode"
-                          value={personalInfo.address.zipCode}
-                          onChange={(e) =>
-                            handleInputChange("zipCode", e.target.value.replace(/\D/g, "").slice(0, 5), "address")
-                          }
-                          placeholder="12345"
-                          maxLength={5}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-sm text-red-600">{error}</p>
-                  </div>
-                )}
-
-                {/* Navigation Buttons */}
-                <div className="flex justify-end pt-6">
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isLoading || !validateStep(currentStep)}
-                    className="bg-sky-500 hover:bg-sky-600 transition-colors disabled:opacity-50"
-                  >
-                    {isLoading ? "Processing..." : "Complete Application"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex justify-between text-sm text-gray-400 mb-2">
+            <span>Step 2 of 3</span>
+            <span>67% Complete</span>
           </div>
+          <Progress value={67} className="h-2 bg-gray-800" />
+        </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Selected Plan Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Selected Plan</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div>
-                    <div className="font-semibold text-gray-900">{selectedPlan.planName}</div>
-                    <div className="text-sm text-gray-600 capitalize">
-                      {selectedPlan.planType.replace("-", " ")} Plan
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-sky-600">{selectedPlan.price}/month</div>
-                    <div className="text-sm text-gray-600">
-                      {selectedPlan.creditLimit && `${selectedPlan.creditLimit} Credit Line`}
-                      {selectedPlan.loanAmount && `${selectedPlan.loanAmount} Loan Amount`}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Security Notice */}
-            <Card className="bg-green-50 border-green-200">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Shield className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-semibold text-green-800 mb-1">Your Information is Secure</h3>
-                    <p className="text-sm text-green-700">
-                      We use bank-level encryption and never share your personal information with third parties.
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <User className="h-5 w-5 text-sky-400" />
+              Personal Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName" className="text-white">
+                    First Name
+                  </Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={personalInfo.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your first name"
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.firstName}
                     </p>
-                  </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* What Happens Next */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">What Happens Next?</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-sky-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-sm">Identity Verification</div>
-                    <div className="text-xs text-gray-600">We'll verify your information instantly</div>
-                  </div>
+                <div>
+                  <Label htmlFor="lastName" className="text-white">
+                    Last Name
+                  </Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={personalInfo.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your last name"
+                  />
+                  {errors.lastName && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.lastName}
+                    </p>
+                  )}
                 </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-sky-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-sm">Account Setup</div>
-                    <div className="text-xs text-gray-600">Your credit building account will be created</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-sky-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-sm">Start Building</div>
-                    <div className="text-xs text-gray-600">Begin your credit improvement journey</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </main>
+              </div>
 
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold mb-2">Processing Your Information</h3>
-            <p className="text-gray-600">Please wait while we verify your details and set up your account...</p>
-          </div>
+              {/* Contact Information */}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email" className="text-white flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-sky-400" />
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={personalInfo.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your email address"
+                  />
+                  {errors.email && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="phone" className="text-white flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-sky-400" />
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={personalInfo.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="555-1234 or (555) 123-4567"
+                    maxLength={14}
+                  />
+                  {errors.phone && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.phone}
+                    </p>
+                  )}
+                  <p className="text-gray-400 text-xs mt-1">
+                    Enter 7 digits for local number or 10 digits with area code
+                  </p>
+                </div>
+              </div>
+
+              {/* Date of Birth */}
+              <div>
+                <Label className="text-white flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-sky-400" />
+                  Date of Birth
+                </Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.month}
+                      onValueChange={(value) => handleDateChange("month", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value} className="text-white hover:bg-gray-700">
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.day}
+                      onValueChange={(value) => handleDateChange("day", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Day" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {days.map((day) => (
+                          <SelectItem key={day.value} value={day.value} className="text-white hover:bg-gray-700">
+                            {day.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Select
+                      value={personalInfo.dateOfBirth.year}
+                      onValueChange={(value) => handleDateChange("year", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {years.map((year) => (
+                          <SelectItem key={year.value} value={year.value} className="text-white hover:bg-gray-700">
+                            {year.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {errors.dateOfBirth && (
+                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.dateOfBirth}
+                  </p>
+                )}
+              </div>
+
+              {/* Address Information */}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="address" className="text-white flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-sky-400" />
+                    Street Address
+                  </Label>
+                  <Input
+                    id="address"
+                    type="text"
+                    value={personalInfo.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                    placeholder="Enter your street address"
+                  />
+                  {errors.address && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.address}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="city" className="text-white">
+                      City
+                    </Label>
+                    <Input
+                      id="city"
+                      type="text"
+                      value={personalInfo.city}
+                      onChange={(e) => handleInputChange("city", e.target.value)}
+                      className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                      placeholder="City"
+                    />
+                    {errors.city && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.city}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="state" className="text-white">
+                      State
+                    </Label>
+                    <Select value={personalInfo.state} onValueChange={(value) => handleInputChange("state", value)}>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="State" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        {states.map((state) => (
+                          <SelectItem key={state} value={state} className="text-white hover:bg-gray-700">
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.state && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.state}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="zipCode" className="text-white">
+                      ZIP Code
+                    </Label>
+                    <Input
+                      id="zipCode"
+                      type="text"
+                      value={personalInfo.zipCode}
+                      onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                      className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                      placeholder="12345"
+                      maxLength={10}
+                    />
+                    {errors.zipCode && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.zipCode}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* SSN */}
+              <div>
+                <Label htmlFor="ssn" className="text-white">
+                  Social Security Number
+                </Label>
+                <Input
+                  id="ssn"
+                  type="text"
+                  value={personalInfo.ssn}
+                  onChange={(e) => handleInputChange("ssn", e.target.value)}
+                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  placeholder="XXX-XX-XXXX"
+                  maxLength={11}
+                />
+                {errors.ssn && (
+                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.ssn}
+                  </p>
+                )}
+                <p className="text-gray-400 text-sm mt-1">
+                  Your SSN is encrypted and used only for identity verification
+                </p>
+              </div>
+
+              {/* Submit Error */}
+              {errors.submit && (
+                <Alert className="bg-red-900/20 border-red-500/50">
+                  <AlertCircle className="h-4 w-4 text-red-400" />
+                  <AlertDescription className="text-red-400">{errors.submit}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 text-lg font-semibold"
+              >
+                {isLoading ? "Processing..." : "Continue to Payment"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Security Notice */}
+        <div className="mt-6 p-4 bg-gray-900 border border-gray-700 rounded-lg">
+          <p className="text-gray-300 text-sm text-center">
+            🔒 Your information is encrypted and secure. We use bank-level security to protect your data.
+          </p>
         </div>
-      )}
+      </div>
     </div>
   )
 }

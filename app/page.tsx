@@ -14,8 +14,40 @@ export default function HomePage() {
       <main className="px-4 md:px-6 pb-8 pt-20">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 mt-8 lg:mt-16">
-            {/* Phone Mockup */}
-            <div className="relative flex-shrink-0">
+            {/* Text Content - Now on the left */}
+            <div className="text-center lg:text-left max-w-lg order-2 lg:order-1">
+              <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                Take your credit to the{" "}
+                <span className="italic underline decoration-2 underline-offset-4 text-sky-400">moon</span>
+                <br />
+                with Take Off!
+              </h1>
+
+              {/* New Slogan */}
+              <p className="text-xl lg:text-2xl font-semibold text-sky-400 mb-8">Add Multiple Credit Builder Lines</p>
+
+              {/* Add the new astronaut rocket image */}
+              <div className="flex justify-center lg:justify-start mb-8">
+                <img
+                  src="/astronaut-rocket-new.png"
+                  alt="Astronaut riding rocket to the moon"
+                  className="w-[350px] h-[350px] object-contain"
+                />
+              </div>
+
+              <p className="text-lg text-gray-300 mb-2">No credit checks, hidden fees, or interest.</p>
+
+              <p className="text-lg font-semibold text-white mb-8">Plans from $15/month</p>
+
+              <Link href="/plans">
+                <Button className="w-full lg:w-auto bg-sky-500 hover:bg-sky-600 text-white px-12 py-6 text-lg rounded-full">
+                  View Plans & Pricing
+                </Button>
+              </Link>
+            </div>
+
+            {/* Phone Mockup - Now on the right */}
+            <div className="relative flex-shrink-0 order-1 lg:order-2">
               {/* Phone Frame with New Image */}
               <div className="relative w-72 h-[580px] bg-gray-800 rounded-[3rem] p-2">
                 <div className="w-full h-full bg-gray-900 rounded-[2.5rem] overflow-hidden relative">
@@ -156,38 +188,6 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Text Content */}
-            <div className="text-center lg:text-left max-w-lg">
-              <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                Take your credit to the{" "}
-                <span className="italic underline decoration-2 underline-offset-4 text-sky-400">moon</span>
-                <br />
-                with Take Off!
-              </h1>
-
-              {/* New Slogan */}
-              <p className="text-xl lg:text-2xl font-semibold text-sky-400 mb-8">Add Multiple Credit Builder Lines</p>
-
-              {/* Add the new astronaut rocket image */}
-              <div className="flex justify-center lg:justify-start mb-8">
-                <img
-                  src="/astronaut-rocket-new.png"
-                  alt="Astronaut riding rocket to the moon"
-                  className="w-[350px] h-[350px] object-contain"
-                />
-              </div>
-
-              <p className="text-lg text-gray-300 mb-2">No credit checks, hidden fees, or interest.</p>
-
-              <p className="text-lg font-semibold text-white mb-8">Plans from $15/month</p>
-
-              <Link href="/plans">
-                <Button className="w-full lg:w-auto bg-sky-500 hover:bg-sky-600 text-white px-12 py-6 text-lg rounded-full">
-                  View Plans & Pricing
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
